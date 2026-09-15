@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widget_previews.dart';
+import 'package:movielog/common_app_bar.dart';
 import 'package:movielog/favorite_genres.dart';
 import 'package:movielog/profile_header.dart';
 import 'package:movielog/stat_item.dart';
-import 'package:movielog/theme/app_text_styles.dart';
-import 'package:movielog/theme/app_theme.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -12,9 +10,8 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('내 프로필'),
-        centerTitle: false,
+      appBar: const CommonAppBar(
+        title: '내 프로필',
       ),
       body: SafeArea(
         child: Padding(

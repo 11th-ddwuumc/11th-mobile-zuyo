@@ -77,6 +77,7 @@ class ProfileHeader extends StatelessWidget{
               textStyle: AppTextStyles.bodyLargeMedium.copyWith(
                 letterSpacing: 0,
               ),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: const Text('프로필 수정'),
           ),
