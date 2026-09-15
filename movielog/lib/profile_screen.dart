@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:movielog/profile_header.dart';
+import 'package:movielog/stat_item.dart';
 import 'package:movielog/theme/app_theme.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -22,7 +23,19 @@ class ProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ProfileHeader(),
-              // todo: 통계 장르 추가
+
+              const SizedBox(height: 32),
+
+              Row(
+                spacing: 8,
+                children: [
+                  Expanded(child: StatItem(label: '본 영화', value: '342')),
+                  Expanded(child: StatItem(label: '평점', value: '4.2')),
+                  Expanded(child: StatItem(label: '즐겨찾기', value: '58')),
+                ],
+              ),
+
+
             ],
           ),
         ),
