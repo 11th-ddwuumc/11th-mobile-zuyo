@@ -50,7 +50,6 @@ class ProfileHeader extends StatelessWidget{
                 style: AppTextStyles.bodyLargeMedium.copyWith(
                   letterSpacing: 0,
                   color: Color(0xFF494551),
-                  fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis

@@ -14,12 +14,8 @@ class StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.low,
         border: Border.all(color: AppColors.primary200, width: 1),
