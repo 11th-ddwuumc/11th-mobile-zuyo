@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/widget_previews.dart';
+import 'package:movielog/theme/app_theme.dart';
 
 // 홈에서 보여줄 시작 화면
 class StartScreen extends StatelessWidget {
@@ -37,12 +40,12 @@ class StartScreen extends StatelessWidget {
                   SizedBox(
                     width: 128,
                     height: 128,
-                    child: Icon(
-                      Icons.movie_outlined,
-                      semanticLabel: '영화 아이콘',
-                      size: 72,
-                      color: Color(0xFF6750A4),
-                    ),
+                    child: SvgPicture.asset(
+                      'assets/logos/movielog_logo.svg',
+                      width: 72,
+                      height: 72,
+                      semanticsLabel: 'MovieLog 로고',
+                    )
                   ),
 
                   SizedBox(height: 32),
@@ -116,4 +119,14 @@ class StartScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+
+@Preview(name: '시작 화면', size: Size(390, 844))
+Widget startScreenPreview() {
+  return MaterialApp(
+    debugShowCheckedModeBanner: false,
+    theme: AppTheme.light,
+    home: const StartScreen(),
+  );
 }
