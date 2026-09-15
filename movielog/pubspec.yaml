@@ -87,3 +87,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  assets:
+    - assets/images/profile/
+    - assets/images/posters/
+    - assets/icons/
+    - assets/logos/
+
+  fonts:
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope-VariableFont_wght.ttf
