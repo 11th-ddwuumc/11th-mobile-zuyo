@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
+import 'package:movielog/favorite_genres.dart';
 import 'package:movielog/profile_header.dart';
 import 'package:movielog/stat_item.dart';
+import 'package:movielog/theme/app_text_styles.dart';
 import 'package:movielog/theme/app_theme.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -21,11 +23,11 @@ class ProfileScreen extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 32,
             children: [
+              // 프로필 헤더 - 이미지, 닉네임
               ProfileHeader(),
-
-              const SizedBox(height: 32),
-
+              // 통계 카드
               Row(
                 spacing: 8,
                 children: [
@@ -34,22 +36,12 @@ class ProfileScreen extends StatelessWidget {
                   Expanded(child: StatItem(label: '즐겨찾기', value: '58')),
                 ],
               ),
-
-
+              // 선호 장르
+              FavoriteGenres()
             ],
           ),
         ),
       ),
     );
   }
-}
-
-
-@Preview(name: '프로필 화면', size: Size(390, 844))
-Widget profileScreenPreview() {
-  return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: AppTheme.light,
-    home: const ProfileScreen(),
-  );
 }

@@ -120,13 +120,3 @@ class StartScreen extends StatelessWidget {
     );
   }
 }
-
-
-@Preview(name: '시작 화면', size: Size(390, 844))
-Widget startScreenPreview() {
-  return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: AppTheme.light,
-    home: const StartScreen(),
-  );
-}

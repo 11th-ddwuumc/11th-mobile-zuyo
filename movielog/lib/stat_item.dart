@@ -36,7 +36,7 @@ class StatItem extends StatelessWidget {
           Text(
             value,
             style: AppTextStyles.titleLargeBold.copyWith(
-              color: AppColors.primary500,
+              color: AppColors.primary600,
             ),
           ),
         ],
