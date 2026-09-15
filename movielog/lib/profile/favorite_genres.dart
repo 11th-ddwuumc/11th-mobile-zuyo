@@ -41,6 +41,7 @@ class GenreChip extends StatelessWidget {
         fontSize: 12,
         height: 16 / 12,
         color: AppColors.primary600,
+        letterSpacing: 0
       ),
       padding: const EdgeInsets.symmetric(vertical: 8),
       labelPadding: const EdgeInsets.symmetric(horizontal: 16),

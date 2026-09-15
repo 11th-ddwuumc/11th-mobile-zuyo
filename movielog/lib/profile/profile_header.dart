@@ -21,10 +21,12 @@ class ProfileHeader extends StatelessWidget{
               width: 2,
             ),
           ),
-          child: const CircleAvatar(
-            radius: 60,
-            backgroundImage: AssetImage(
+          child: ClipOval(
+            child: Image.asset(
               'assets/images/profile/profile_movielog.jpg',
+              width: 120,
+              height: 120,
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -40,7 +42,6 @@ class ProfileHeader extends StatelessWidget{
                   fontSize: 22,
                   height: 28 / 22,
                   color: AppColors.neutral900,
-                  fontWeight: FontWeight.bold
               ),
             ),
 
@@ -49,7 +50,7 @@ class ProfileHeader extends StatelessWidget{
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodyLargeMedium.copyWith(
                   letterSpacing: 0,
-                  color: Color(0xFF494551),
+                  color: AppColors.textSecondary,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movielog/common_app_bar.dart';
-import 'package:movielog/favorite_genres.dart';
-import 'package:movielog/profile_header.dart';
-import 'package:movielog/stat_item.dart';
+import 'package:movielog/profile/favorite_genres.dart';
+import 'package:movielog/profile/profile_header.dart';
+import 'package:movielog/profile/stat_item.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -28,7 +28,13 @@ class ProfileScreen extends StatelessWidget {
               Row(
                 spacing: 8,
                 children: [
-                  Expanded(child: StatItem(label: '본 영화', value: '342')),
+                  Expanded(
+                    child: StatItem(
+                      label: '본 영화',
+                      value: '342',
+                      iconPath: 'assets/icons/movie.svg',
+                    ),
+                  ),
                   Expanded(child: StatItem(label: '평점', value: '4.2')),
                   Expanded(child: StatItem(label: '즐겨찾기', value: '58')),
                 ],

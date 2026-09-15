@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 abstract final class AppColors {
 
+  // 보조 텍스트
+  static const textSecondary = Color(0xFF494551);
+
   // Primary
   static const primary100 = Color(0xFFF3EFFF);
   static const primary200 = Color(0xFFE9DDFF);

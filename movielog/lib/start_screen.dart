@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movielog/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/widget_previews.dart';
-import 'package:movielog/theme/app_theme.dart';
 
 // 홈에서 보여줄 시작 화면
 class StartScreen extends StatelessWidget {
@@ -10,7 +9,7 @@ class StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFAF9F5),
+      backgroundColor: AppColors.base,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -29,7 +28,7 @@ class StartScreen extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Color(0xFF494551),
+                      color: AppColors.textSecondary,
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -56,7 +55,7 @@ class StartScreen extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFF1B1C1A),
+                      color: AppColors.neutral900,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
@@ -70,7 +69,7 @@ class StartScreen extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFF494551),
+                      color: AppColors.textSecondary,
                       fontSize: 14,
                     ),
                   ),
@@ -95,7 +94,7 @@ class StartScreen extends StatelessWidget {
                     debugPrint('시작하기 버튼을 눌렀습니다.');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF4F378A),
+                    backgroundColor: AppColors.primary600,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: EdgeInsets.symmetric(
