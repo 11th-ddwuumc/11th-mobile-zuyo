@@ -11,6 +11,9 @@ class SignupField extends StatelessWidget{
     required this.onChanged,
     required this.validator,
     required this.showValidation,
+    this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   final String label;
@@ -19,6 +22,9 @@ class SignupField extends StatelessWidget{
   final ValueChanged<String> onChanged;
   final FormFieldValidator<String> validator;
   final bool showValidation;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +47,9 @@ class SignupField extends StatelessWidget{
           onChanged: onChanged,
           validator: validator,
           autovalidateMode: showValidation ? AutovalidateMode.always : AutovalidateMode.disabled,
+          focusNode: focusNode,
+          textInputAction: textInputAction,
+          onFieldSubmitted: onFieldSubmitted,
           style: AppTextStyles.bodyLargeMedium.copyWith(
             color: AppColors.textPrimary
           ),

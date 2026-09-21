@@ -23,6 +23,7 @@ class _SignupScreenState extends State<SignupScreen>{
   // 비밀번호
   final _passwordController = TextEditingController();
   bool _passwordEdited = false;
+  final _passwordFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -82,6 +83,10 @@ class _SignupScreenState extends State<SignupScreen>{
                       label: '이메일', hint: '이메일을 입력해주세요', 
                       controller: _emailController, 
                       validator: validateEmail, showValidation: _emailEdited,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) {
+                        _passwordFocusNode.requestFocus();
+                      },
                       onChanged: (_){
                         setState(() {
                           _emailEdited = true;
@@ -93,6 +98,11 @@ class _SignupScreenState extends State<SignupScreen>{
                       label: '비밀번호', hint: '비밀번호를 입력해주세요', 
                       controller: _passwordController, 
                       validator: validatePassword, showValidation: _passwordEdited,
+                      focusNode: _passwordFocusNode,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) {
+                        _passwordFocusNode.unfocus();
+                      },
                       onChanged: (_){
                         setState(() {
                           _passwordEdited = true;
@@ -115,6 +125,9 @@ class _SignupScreenState extends State<SignupScreen>{
   @override
   void dispose() {
     _nicknameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 }
