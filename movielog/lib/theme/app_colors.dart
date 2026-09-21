@@ -43,7 +43,7 @@ abstract final class AppColors {
   static const tertiary700 = Color(0xFF594400);
   static const tertiary900 = Color(0xFF241A00);
 
-// Neutral
+  // Neutral
   static const neutral100 = Color(0xFFFFFFFF);
   static const neutral200 = Color(0xFFF5F3F0);
   static const neutral400 = Color(0xFFEFEEEA);
@@ -51,4 +51,7 @@ abstract final class AppColors {
   static const neutral800 = Color(0xFF7A7582);
   static const neutral900 = Color(0xFF1B1C1A);
 
+  // error
+  static const error = Color(0XFFB3261E);
+  static const errorBase = Color(0xFFFFDAD6);
 }
