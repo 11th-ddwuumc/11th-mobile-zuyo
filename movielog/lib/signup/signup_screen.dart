@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:movielog/common_app_bar.dart';
+import 'package:movielog/signup/signup_field.dart';
+import 'package:movielog/signup/signup_validator.dart';
+import 'package:movielog/theme/app_colors.dart';
+import 'package:movielog/theme/app_text_styles.dart';
 
 class SignupScreen extends StatefulWidget{
   const SignupScreen({super.key});
@@ -10,7 +14,15 @@ class SignupScreen extends StatefulWidget{
 
 class _SignupScreenState extends State<SignupScreen>{
   final _formKey = GlobalKey<FormState>();
+  // 닉네임
   final _nicknameController = TextEditingController();
+  bool _nicknameEdited = false;
+  // 이메일
+  final _emailController = TextEditingController();
+  bool _emailEdited = false;
+  // 비밀번호
+  final _passwordController = TextEditingController();
+  bool _passwordEdited = false;
 
   @override
   void initState() {
@@ -41,13 +53,55 @@ class _SignupScreenState extends State<SignupScreen>{
                 // 환영 문구
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  child: const Text(
+                  child: Text(
                     '환영합니다!\n간단한 정보만 입력하고 시작해보세요.',
                     textAlign: TextAlign.center,
+                    style: AppTextStyles.bodyLargeMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    )
                   ),
                 ),
 
                 // 입력창
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: 16,
+                  children: [
+                    SignupField(
+                      label: '닉네임', hint: '닉네임을 입력해주세요', 
+                      controller: _nicknameController, 
+                      validator: validateNickname, showValidation: _nicknameEdited,
+                      onChanged: (_){
+                        setState(() {
+                          _nicknameEdited = true;
+                        });
+                      }, 
+                    ),
+
+                    SignupField(
+                      label: '이메일', hint: '이메일을 입력해주세요', 
+                      controller: _emailController, 
+                      validator: validateEmail, showValidation: _emailEdited,
+                      onChanged: (_){
+                        setState(() {
+                          _emailEdited = true;
+                        });
+                      } 
+                    ),
+                    
+                    SignupField(
+                      label: '비밀번호', hint: '비밀번호를 입력해주세요', 
+                      controller: _passwordController, 
+                      validator: validatePassword, showValidation: _passwordEdited,
+                      onChanged: (_){
+                        setState(() {
+                          _passwordEdited = true;
+                        });
+                      },
+                    )
+                  ],
+                )
+                
 
                 // 버튼
               ],

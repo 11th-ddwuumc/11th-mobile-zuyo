@@ -4,6 +4,8 @@ abstract final class AppColors {
 
   // 보조 텍스트
   static const textSecondary = Color(0xFF494551);
+  // 회원가입 화면에 사용 
+  static const textPrimary = Color(0XFF1D1B20);
 
   // Primary
   static const primary100 = Color(0xFFF3EFFF);
