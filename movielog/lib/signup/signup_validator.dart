@@ -17,12 +17,13 @@ String? validateNickname(String? value){
 // 이메일
 String? validateEmail(String? value){
   final email = (value ?? '').trim();
+  final emailPattern = RegExp(r'^[^@\s]+@[^@\s.]+(\.[^@\s.]+)+$');
 
   if(email.isEmpty){
     return '이메일 주소를 입력해주세요';
   }
 
-  if(!email.contains('@')){
+  if (!emailPattern.hasMatch(email)) {
     return '올바른 이메일 형식이 아닙니다.';
   }
 

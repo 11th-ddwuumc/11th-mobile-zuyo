@@ -11,6 +11,7 @@ class SignupField extends StatelessWidget{
     required this.onChanged,
     required this.validator,
     required this.showValidation,
+    this.obscureText = false,
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
@@ -22,6 +23,7 @@ class SignupField extends StatelessWidget{
   final ValueChanged<String> onChanged;
   final FormFieldValidator<String> validator;
   final bool showValidation;
+  final bool obscureText;
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onFieldSubmitted;
@@ -29,7 +31,7 @@ class SignupField extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     final errorMessage = validator(controller.text);
-    final isValid = validator(controller.text) == null;
+    final isValid = errorMessage == null;
     final hasError = showValidation && !isValid;
 
     return Column(
@@ -43,6 +45,7 @@ class SignupField extends StatelessWidget{
           ),
         ),
         TextFormField(
+          obscureText: obscureText,
           controller: controller,
           onChanged: onChanged,
           validator: validator,
@@ -61,7 +64,7 @@ class SignupField extends StatelessWidget{
             contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 16),
             isDense: true,
             filled: true,
-            fillColor: hasError ? AppColors.errorBase : AppColors.base,
+            fillColor: hasError ? AppColors.errorBase : AppColors.low,
 
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -98,7 +101,7 @@ class SignupField extends StatelessWidget{
         ),
         if(hasError)
           Text(
-            errorMessage!,
+            errorMessage,
             style: AppTextStyles.labelSmallMedium.copyWith(
               fontSize: 12,
               color: AppColors.error
