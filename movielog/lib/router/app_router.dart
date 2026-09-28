@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:movielog/home_screen.dart';
+import 'package:movielog/home/home_screen.dart';
 import 'package:movielog/movie/movie_detail_screen.dart';
 import 'package:movielog/movie/movie_screen.dart';
 import 'package:movielog/profile/profile_screen.dart';
