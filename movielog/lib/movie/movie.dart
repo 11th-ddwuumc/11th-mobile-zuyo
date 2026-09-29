@@ -5,6 +5,7 @@ class Movie {
     required this.genres,
     required this.year,
     required this.posterAsset,
+    required this.rating,
     this.runtimeMinutes,
     this.tags = const [],
     this.synopsis = '',
@@ -17,6 +18,8 @@ class Movie {
   final List<String> tags;
   final int year;
   final String posterAsset;
+  // 목록과 상세에 공통으로 표시하는 Mock 평균 평점 (내가 입력한 평점과 별개).
+  final double rating;
   // 추천신작에 보여주기 위해 추가
   final int? runtimeMinutes;
   final String synopsis;
@@ -25,6 +28,7 @@ class Movie {
 const movies = [
   Movie(
     id: 1,
+    rating: 4.5,
     title: '별빛 아래 우리',
     genres: ['로맨스', '드라마'],
     tags: ['감동적인'],
@@ -42,6 +46,7 @@ const movies = [
   ),
   Movie(
     id: 2,
+    rating: 4.2,
     title: '우주의 끝에서',
     genres: ['SF'],
     year: 2024,
@@ -49,6 +54,7 @@ const movies = [
   ),
   Movie(
     id: 3,
+    rating: 4.9,
     title: '기억의 숲',
     genres: ['애니메이션'],
     year: 2022,
@@ -56,6 +62,7 @@ const movies = [
   ),
   Movie(
     id: 4,
+    rating: 3.8,
     title: '밤의 그림자',
     genres: ['스릴러'],
     year: 2024,
@@ -63,6 +70,7 @@ const movies = [
   ),
   Movie(
     id: 5,
+    rating: 4.5,
     title: '봄날의 커피',
     genres: ['로맨스'],
     year: 2021,
@@ -70,10 +78,11 @@ const movies = [
   ),
   Movie(
     id: 6,
+    rating: 4.1,
     title: '도시의 선',
     genres: ['다큐멘터리'],
     year: 2023,
-    posterAsset: 'assets/images/posters/poster_abyss_walker.jpg',
+    posterAsset: 'assets/images/posters/poster_modern_architecture.jpg',
   ),
 ];
 

@@ -42,13 +42,13 @@ class MovieDetailInfo extends StatelessWidget{
             ),
           ),
 
-          // 별점
+          // 읽기 전용 평점
           const SizedBox(height: 12),
           Row(
             spacing: 4,
             children: [
               RatingBarIndicator(
-                rating: 4.5,
+                rating: movie.rating,
                 itemCount: 5,
                 itemSize: 20,
                 itemBuilder: (context, index) => SvgPicture.asset(
@@ -62,7 +62,7 @@ class MovieDetailInfo extends StatelessWidget{
               const SizedBox(width: 8),
               
               Text(
-                '4.5',
+                '${movie.rating}',
                 style: AppTextStyles.bodyLargeMedium.copyWith(
                   color: AppColors.neutral900
                 ),
