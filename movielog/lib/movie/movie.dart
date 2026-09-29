@@ -84,6 +84,30 @@ const movies = [
     year: 2023,
     posterAsset: 'assets/images/posters/poster_modern_architecture.jpg',
   ),
+  Movie(
+    id: 7,
+    rating: 4.8,
+    title: '마션 레스큐',
+    genres: ['SF'],
+    year: 2022,
+    posterAsset: 'assets/images/posters/poster_abyss_walker.jpg' 
+  ),
+  Movie(
+    id: 8,
+    rating: 4.6,
+    title: '스파이 코드',
+    genres: ['액션'],
+    year: 2021,
+    posterAsset: 'assets/images/posters/poster_mission_improbable.jpg' 
+  ),
+  Movie(
+    id: 9,
+    rating: 4.4,
+    title: '비오는 날의 기억',
+    genres: ['스릴러'],
+    year: 2022,
+    posterAsset: 'assets/images/posters/poster_shadow_tide.jpg' 
+  ),
 ];
 
 Movie? findMovieById(int? id) {

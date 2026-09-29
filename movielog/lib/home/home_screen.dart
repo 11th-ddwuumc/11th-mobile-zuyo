@@ -4,6 +4,7 @@ import 'package:movielog/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movielog/common_app_bar.dart';
 import 'package:movielog/home/featured_movie_card.dart';
+import 'package:movielog/home/popular_movies_section.dart';
 import 'package:movielog/movie/movie.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
@@ -42,25 +43,22 @@ class HomeScreen extends StatelessWidget {
                 child: Text(
                   '오늘은 어떤\n영화를 볼까요?',
                   style: AppTextStyles.titleLargeMedium.copyWith(
-                    color: AppColors.textPrimary
+                    color: AppColors.textPrimary,
                   ),
-                )
-              ),
-              
-              // 추천카드 
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 24,
                 ),
+              ),
+
+              // 추천카드
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
                 child: FeaturedMovieCard(
                   movie: movies.first,
                   onTap: () => context.push('/movies/${movies.first.id}'),
                 ),
               ),
+              const PopularMoviesSection(),
             ],
-          )
+          ),
         ),
       ),
     );
