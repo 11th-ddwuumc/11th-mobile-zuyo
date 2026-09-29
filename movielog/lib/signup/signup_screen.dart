@@ -57,9 +57,7 @@ class _SignupScreenState extends State<SignupScreen> {
       appBar: CommonAppBar(
         title: '회원가입',
         centerTitle: true,
-        onBack: () {
-          Navigator.of(context).maybePop();
-        },
+        onBack: () {},
       ),
 
       body: SafeArea(
