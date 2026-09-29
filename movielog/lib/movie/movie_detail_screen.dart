@@ -5,16 +5,59 @@ import 'package:movielog/movie/movie.dart';
 import 'package:movielog/movie/movie_detail_actions.dart';
 import 'package:movielog/movie/movie_detail_info.dart';
 import 'package:movielog/movie/movie_synopsis.dart';
+import 'package:movielog/movie/rating_dialog.dart';
 import 'package:movielog/theme/app_colors.dart';
 
-class MovieDetailScreen extends StatelessWidget {
+class MovieDetailScreen extends StatefulWidget {
   const MovieDetailScreen({super.key, required this.movieId});
 
   final String movieId;
 
   @override
+  State<MovieDetailScreen> createState() => _MovieDetailScreenState();
+}
+
+class _MovieDetailScreenState extends State<MovieDetailScreen>{
+  double? myRating;
+  bool isBookmark = false;
+
+  Future<void> _openRatingDialog() async {
+    final result = await showDialog<double>(
+      context: context,
+      builder: (context) => const RatingDialog(),
+    );
+
+    if (result == null || !mounted) return;
+
+    setState(() {
+      myRating = result;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('평점 ${result.toStringAsFixed(1)}점을 남겼어요.')),
+    );
+  }
+
+  void _toggleBookmark() {
+    setState(() {
+      isBookmark = !isBookmark;
+    });
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            isBookmark ? '즐겨찾기에 추가했어요.' : '즐겨찾기에서 해제했어요.',
+          ),
+        ),
+      );
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    final movie = findMovieById(int.tryParse(movieId));
+    final movie = findMovieById(int.tryParse(widget.movieId));
 
     return Scaffold(
       appBar: CommonAppBar(
@@ -75,11 +118,14 @@ class MovieDetailScreen extends StatelessWidget {
             ),
           ),
         ),
-        child: const SafeArea(
+        child: SafeArea(
           top: false,
           child: Padding(
             padding: EdgeInsets.all(16),
-            child: MovieDetailActions(),
+            child: MovieDetailActions(
+              onRate: _openRatingDialog,
+              onBookmark: _toggleBookmark,
+            ),
           ),
         ),
       ),

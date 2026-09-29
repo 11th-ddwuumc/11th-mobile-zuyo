@@ -4,7 +4,14 @@ import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
 class MovieDetailActions extends StatelessWidget{
-  const MovieDetailActions({super.key});
+  const MovieDetailActions({
+    super.key,
+    required this.onBookmark,
+    required this.onRate,
+  });
+
+  final VoidCallback onBookmark;
+  final VoidCallback onRate;
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +20,7 @@ class MovieDetailActions extends StatelessWidget{
         // 즐겨 찾기
         Expanded(
           child: OutlinedButton(
-            onPressed: () {
-              // todo: 즐겨찾기 이동
-            }, 
+            onPressed: onBookmark,
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary500,
               side: const BorderSide(
@@ -51,9 +56,7 @@ class MovieDetailActions extends StatelessWidget{
         const SizedBox(width: 8),
         Expanded(
           child: ElevatedButton(
-            onPressed: () {
-              // todo: 별점 Dialog 
-            }, 
+            onPressed: onRate,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary500,
               foregroundColor: AppColors.lowest,
