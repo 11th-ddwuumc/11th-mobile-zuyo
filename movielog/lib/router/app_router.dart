@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:movielog/home/home_screen.dart';
+import 'package:movielog/main_screen.dart';
 import 'package:movielog/movie/movie_detail_screen.dart';
 import 'package:movielog/movie/movie_screen.dart';
 import 'package:movielog/profile/profile_screen.dart';
@@ -20,27 +21,44 @@ class AppRouter {
         path: '/signup',
         builder: (context, state) => const SignupScreen(),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomeScreen(),
+
+      ShellRoute(
+        builder: (context, state, child) {
+          return MainScreen(
+            currentIndex: indexFromLocation(state.uri.path),
+            child: child,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/movies',
+            builder: (context, state) => const MovieScreen(),
+          ),
+          GoRoute(
+            path: '/my',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+        ],
       ),
-      GoRoute(
-        path: '/movies',
-        builder: (context, state) => const MovieScreen(),
-      ),
+
       GoRoute(
         path: '/movies/:movieId',
         builder: (context, state) {
-          final movieId = state.pathParameters['movieId']!;
-
-          return MovieDetailScreen(movieId: movieId);
+          return MovieDetailScreen(
+            movieId: state.pathParameters['movieId']!,
+          );
         },
       ),
-      GoRoute(
-        path: '/my',
-        builder: (context, state) => const ProfileScreen(),
-      ),
-
     ],
   );
+
+  static int indexFromLocation(String path) {
+    if (path.startsWith('/movies')) return 1;
+    if (path.startsWith('/my')) return 2;
+    return 0;
+  }
 }
