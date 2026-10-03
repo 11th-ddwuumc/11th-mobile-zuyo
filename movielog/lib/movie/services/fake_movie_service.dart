@@ -11,6 +11,7 @@ class MovieLoadException implements Exception {
 class FakeMovieService {
   const FakeMovieService();
 
+  // todo(5주차 유저별 평점 조회 API): Mock 요청을 실제 API 호출로 교체
   Future<List<Movie>> fetchMovies({
     MovieLoadMode mode = MovieLoadMode.success,
   }) async {

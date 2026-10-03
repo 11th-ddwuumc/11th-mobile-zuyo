@@ -5,6 +5,7 @@ import 'package:movielog/movie/movie.dart';
 import 'package:movielog/movie/movie_genre_filter.dart';
 import 'package:movielog/movie/movie_grid.dart';
 import 'package:movielog/movie/services/fake_movie_service.dart';
+import 'package:movielog/movie/services/genre_preference.dart';
 import 'package:movielog/movie/states/movie_list_empty.dart';
 import 'package:movielog/movie/states/movie_list_error.dart';
 import 'package:movielog/movie/states/movie_list_loading.dart';
@@ -25,9 +26,21 @@ class _MovieScreenState extends State<MovieScreen> {
 
   final FakeMovieService movieService = const FakeMovieService();
 
+  final genrePreference = GenrePreference();
+
   void _retry() {
     setState(() {
       _moviesFuture = movieService.fetchMovies();
+    });
+  }
+
+  Future<void> _restoreGenre() async{
+    final savedGenre = await genrePreference.read();
+
+    if(!mounted) return;
+    
+    setState(() {
+      selectedGenre = savedGenre;
     });
   }
 
@@ -35,6 +48,7 @@ class _MovieScreenState extends State<MovieScreen> {
   void initState() {
     super.initState();
     _moviesFuture = movieService.fetchMovies();
+    _restoreGenre();
   }
 
   @override
@@ -69,10 +83,12 @@ class _MovieScreenState extends State<MovieScreen> {
               MovieGenreFilter(
                 genres: genres,
                 selectedGenre: selectedGenre,
-                onSelected: (genre) {
+                onSelected: (genre) async {
                   setState(() {
                     selectedGenre = genre;
                   });
+
+                  await genrePreference.save(genre);
                 },
               ),
               const SizedBox(height: 16),
