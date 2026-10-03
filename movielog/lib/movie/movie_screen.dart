@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:movielog/common_app_bar.dart';
 import 'package:movielog/movie/movie.dart';
-import 'package:movielog/movie/movie_card.dart';
 import 'package:movielog/movie/movie_genre_filter.dart';
+import 'package:movielog/movie/movie_grid.dart';
 import 'package:movielog/theme/app_colors.dart';
 
 class MovieScreen extends StatefulWidget {
@@ -68,38 +67,8 @@ class _MovieScreenState extends State<MovieScreen> {
               ),
               const SizedBox(height: 16),
 
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    const columnSpacing = 16.0; // 옆 카드와의 간격
-                    final cardWidth = (constraints.maxWidth - columnSpacing) / 2;
-                    
-                    // 포스터 2:3 + 간격 4(포스터랑 제목) + 위 패딩 8(제목 위의) + 텍스트 두 줄
-                    final posterHeight = cardWidth * 1.5; // 포스터 비율 2:3
-                    final infoHeight = 8.0 + 24.0 + 24.0;
-                    final cardHeight = posterHeight + 4.0 + infoHeight;
-
-                    // 영화 카드
-                    return GridView.builder(
-                      padding: EdgeInsets.only(bottom: 16),
-                      itemCount: filteredMovies.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: columnSpacing,
-                        mainAxisSpacing: 24, // 밑의 카드와의 간격
-                        mainAxisExtent: cardHeight,
-                      ),
-                      itemBuilder: (context, index) {
-                        final movie = filteredMovies[index];
-                        return MovieCard(
-                          movie: movie,
-                          onTap: () => context.push('/movies/${movie.id}'),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
+              // 영화 목록 그리드
+              Expanded(child: MovieGrid(movies: filteredMovies)),
             ],
           ),
         ),
