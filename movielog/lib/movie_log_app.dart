@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:movielog/start_screen.dart';
+import 'package:movielog/theme/app_theme.dart';
+import 'profile/profile_screen.dart';
 
 class MovieLogApp extends StatelessWidget{
   const MovieLogApp({super.key});
@@ -9,8 +10,8 @@ class MovieLogApp extends StatelessWidget{
     return MaterialApp( // 앱 전체 설정
       debugShowCheckedModeBanner: false,
       title: 'MovieLog',
-      theme: ThemeData(useMaterial3: true,),
-      home: const StartScreen(),
+      theme: AppTheme.light,
+      home: const ProfileScreen(),
     );
   }
 }
