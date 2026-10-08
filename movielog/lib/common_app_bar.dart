@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
@@ -23,7 +25,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(
         title,
-        style: titleStyle ??
+        style:
+            titleStyle ??
             AppTextStyles.titleMediumMedium.copyWith(
               fontSize: 22,
               height: 28 / 22,
@@ -31,12 +34,24 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
       ),
       centerTitle: centerTitle,
-      leading: onBack == null
+      automaticallyImplyLeading: false,
+      leading:
+          onBack == null &&
+              !(ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
           ? null
           : IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: onBack,
-      ),
+              icon: SvgPicture.asset(
+                'assets/icons/arrow_back.svg',
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.primary500,
+                  BlendMode.srcIn,
+                ),
+              ),
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              onPressed: onBack ?? () => context.pop(),
+            ),
       actions: actions,
     );
   }

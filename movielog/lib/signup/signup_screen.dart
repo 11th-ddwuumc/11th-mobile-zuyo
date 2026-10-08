@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movielog/common_app_bar.dart';
 import 'package:movielog/signup/signup_field.dart';
 import 'package:movielog/signup/signup_footer.dart';
@@ -42,6 +43,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (!isValid || !_agreed) return;
 
     FocusScope.of(context).unfocus();
+    context.go('/home');
   }
 
   @override
@@ -55,9 +57,7 @@ class _SignupScreenState extends State<SignupScreen> {
       appBar: CommonAppBar(
         title: '회원가입',
         centerTitle: true,
-        onBack: () {
-          Navigator.of(context).maybePop();
-        },
+        onBack: () {},
       ),
 
       body: SafeArea(

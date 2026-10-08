@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
-class SignupField extends StatelessWidget{
+class SignupField extends StatelessWidget {
   const SignupField({
     super.key,
     required this.label,
@@ -41,7 +42,7 @@ class SignupField extends StatelessWidget{
         Text(
           label,
           style: AppTextStyles.bodyLargeMedium.copyWith(
-            color: AppColors.textPrimary
+            color: AppColors.textPrimary,
           ),
         ),
         TextFormField(
@@ -49,17 +50,19 @@ class SignupField extends StatelessWidget{
           controller: controller,
           onChanged: onChanged,
           validator: validator,
-          autovalidateMode: showValidation ? AutovalidateMode.always : AutovalidateMode.disabled,
+          autovalidateMode: showValidation
+              ? AutovalidateMode.always
+              : AutovalidateMode.disabled,
           focusNode: focusNode,
           textInputAction: textInputAction,
           onFieldSubmitted: onFieldSubmitted,
           style: AppTextStyles.bodyLargeMedium.copyWith(
-            color: AppColors.textPrimary
+            color: AppColors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: AppTextStyles.bodyLargeMedium.copyWith(
-              color: AppColors.neutral800
+              color: AppColors.neutral800,
             ),
             contentPadding: EdgeInsets.symmetric(vertical: 9, horizontal: 16),
             isDense: true,
@@ -68,15 +71,11 @@ class SignupField extends StatelessWidget{
 
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Color(0xFFCBC4D2),
-              ),
+              borderSide: const BorderSide(color: Color(0xFFCBC4D2)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: AppColors.primary500,
-              ),
+              borderSide: const BorderSide(color: AppColors.primary500),
             ),
 
             // 에러
@@ -90,23 +89,33 @@ class SignupField extends StatelessWidget{
             ),
 
             suffixIcon: showValidation
-              ? Icon(
-                isValid ? Icons.check_circle : Icons.error_outline,
-                color: isValid ? AppColors.primary500 : AppColors.error,
-                size: 20
-              )
-              : null
+                ? Center(
+                    widthFactor: 1,
+                    heightFactor: 1,
+                    child: SvgPicture.asset(
+                      isValid
+                          ? 'assets/icons/check_circle.svg'
+                          : 'assets/icons/error.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(
+                        isValid ? AppColors.primary500 : AppColors.error,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  )
+                : null,
           ),
           errorBuilder: (context, errorText) => const SizedBox.shrink(),
         ),
-        if(hasError)
+        if (hasError)
           Text(
             errorMessage,
             style: AppTextStyles.labelSmallMedium.copyWith(
               fontSize: 12,
-              color: AppColors.error
-            )
-          )
+              color: AppColors.error,
+            ),
+          ),
       ],
     );
   }

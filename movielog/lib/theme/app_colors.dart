@@ -6,6 +6,8 @@ abstract final class AppColors {
   static const textSecondary = Color(0xFF494551);
   // 회원가입 화면에 사용 
   static const textPrimary = Color(0XFF1D1B20);
+  // 아이콘 선택 시
+  static const selectedIcon = Color(0XFF686177);
 
   // Primary
   static const primary100 = Color(0xFFF3EFFF);
