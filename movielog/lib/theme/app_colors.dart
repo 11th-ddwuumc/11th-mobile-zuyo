@@ -4,6 +4,8 @@ abstract final class AppColors {
 
   // 보조 텍스트
   static const textSecondary = Color(0xFF494551);
+  // 회원가입 화면에 사용 
+  static const textPrimary = Color(0XFF1D1B20);
 
   // Primary
   static const primary100 = Color(0xFFF3EFFF);
@@ -43,7 +45,7 @@ abstract final class AppColors {
   static const tertiary700 = Color(0xFF594400);
   static const tertiary900 = Color(0xFF241A00);
 
-// Neutral
+  // Neutral
   static const neutral100 = Color(0xFFFFFFFF);
   static const neutral200 = Color(0xFFF5F3F0);
   static const neutral400 = Color(0xFFEFEEEA);
@@ -51,4 +53,7 @@ abstract final class AppColors {
   static const neutral800 = Color(0xFF7A7582);
   static const neutral900 = Color(0xFF1B1C1A);
 
+  // error
+  static const error = Color(0XFFB3261E);
+  static const errorBase = Color(0xFFFFDAD6);
 }
