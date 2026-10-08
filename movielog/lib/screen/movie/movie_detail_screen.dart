@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:movielog/common_app_bar.dart';
-import 'package:movielog/movie/movie.dart';
-import 'package:movielog/movie/movie_detail_actions.dart';
-import 'package:movielog/movie/movie_detail_info.dart';
-import 'package:movielog/movie/movie_synopsis.dart';
-import 'package:movielog/movie/rating_dialog.dart';
+import 'package:movielog/widgets/common_app_bar.dart';
+import 'package:movielog/models/movie.dart';
+import 'package:movielog/screen/movie/widgets/movie_detail_actions.dart';
+import 'package:movielog/screen/movie/widgets/movie_detail_info.dart';
+import 'package:movielog/screen/movie/widgets/movie_synopsis.dart';
+import 'package:movielog/screen/movie/widgets/rating_dialog.dart';
 import 'package:movielog/theme/app_colors.dart';
 
 class MovieDetailScreen extends StatefulWidget {

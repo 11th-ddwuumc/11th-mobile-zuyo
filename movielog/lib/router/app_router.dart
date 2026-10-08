@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
-import 'package:movielog/home/home_screen.dart';
-import 'package:movielog/main_screen.dart';
-import 'package:movielog/movie/movie_detail_screen.dart';
-import 'package:movielog/movie/movie_screen.dart';
-import 'package:movielog/profile/profile_screen.dart';
-import 'package:movielog/signup/signup_screen.dart';
-import 'package:movielog/start_screen.dart';
+import 'package:movielog/screen/home/home_screen.dart';
+import 'package:movielog/screen/main_screen.dart';
+import 'package:movielog/screen/movie/movie_detail_screen.dart';
+import 'package:movielog/screen/movie/movie_screen.dart';
+import 'package:movielog/screen/profile/profile_screen.dart';
+import 'package:movielog/screen/signup/signup_screen.dart';
+import 'package:movielog/screen/start_screen.dart';
 
 class AppRouter {
   AppRouter._();

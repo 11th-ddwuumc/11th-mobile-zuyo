@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:movielog/common_app_bar.dart';
-import 'package:movielog/movie/movie.dart';
-import 'package:movielog/movie/movie_genre_filter.dart';
-import 'package:movielog/movie/movie_grid.dart';
-import 'package:movielog/movie/services/fake_movie_service.dart';
-import 'package:movielog/movie/services/genre_preference.dart';
-import 'package:movielog/movie/states/movie_list_empty.dart';
-import 'package:movielog/movie/states/movie_list_error.dart';
-import 'package:movielog/movie/states/movie_list_loading.dart';
+import 'package:movielog/widgets/common_app_bar.dart';
+import 'package:movielog/models/movie.dart';
+import 'package:movielog/screen/movie/widgets/movie_genre_filter.dart';
+import 'package:movielog/screen/movie/widgets/movie_grid.dart';
+import 'package:movielog/services/fake_movie_service.dart';
+import 'package:movielog/services/genre_preference.dart';
+import 'package:movielog/screen/movie/states/movie_list_empty.dart';
+import 'package:movielog/screen/movie/states/movie_list_error.dart';
+import 'package:movielog/screen/movie/states/movie_list_loading.dart';
 import 'package:movielog/theme/app_colors.dart';
 
 class MovieScreen extends StatefulWidget {

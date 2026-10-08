@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movielog/common_app_bar.dart';
-import 'package:movielog/home/featured_movie_card.dart';
-import 'package:movielog/home/popular_movies_section.dart';
-import 'package:movielog/movie/movie.dart';
+import 'package:movielog/widgets/common_app_bar.dart';
+import 'package:movielog/screen/home/widgets/featured_movie_card.dart';
+import 'package:movielog/screen/home/widgets/popular_movies_section.dart';
+import 'package:movielog/models/movie.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
 class HomeScreen extends StatelessWidget {

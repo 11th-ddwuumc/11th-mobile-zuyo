@@ -1,4 +1,4 @@
-import 'package:movielog/movie/movie.dart';
+import 'package:movielog/models/movie.dart';
 
 enum MovieLoadMode { success, empty, failure }
 
