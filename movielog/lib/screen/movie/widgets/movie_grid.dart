@@ -7,9 +7,11 @@ class MovieGrid extends StatelessWidget {
   const MovieGrid({
     super.key,
     required this.movies,
+    required this.genreNamesFor,
   });
 
   final List<TmdbMovieDto> movies;
+  final List<String> Function(TmdbMovieDto) genreNamesFor;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,11 @@ class MovieGrid extends StatelessWidget {
 
             return MovieCard(
               movie: movie,
-              onTap: () => context.push('/movies/${movie.id}', extra: movie),
+              genreNames: genreNamesFor(movie),
+              onTap: () => context.push(
+                '/movies/${movie.id}', 
+                extra: (movie: movie, genreNames: genreNamesFor(movie))
+              ),
             );
           },
           

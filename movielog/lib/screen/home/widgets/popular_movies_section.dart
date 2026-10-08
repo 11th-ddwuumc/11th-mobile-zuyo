@@ -7,9 +7,10 @@ import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
 class PopularMoviesSection extends StatelessWidget {
-  const PopularMoviesSection({super.key, required this.popularMovies});
+  const PopularMoviesSection({super.key, required this.popularMovies, required this.genreNamesFor});
 
   final List<TmdbMovieDto> popularMovies;
+  final List<String> Function(TmdbMovieDto) genreNamesFor;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,13 @@ class PopularMoviesSection extends StatelessWidget {
                 return RankedMovieCard(
                   movie: movie,
                   rank: index + 1,
-                  onTap: () => context.push('/movies/${movie.id}', extra: movie),
+                  onTap: () => context.push(
+                    '/movies/${movie.id}',
+                    extra: (
+                      movie: movie,
+                      genreNames: genreNamesFor(movie),
+                    ),
+                  ),
                 );
               },
             ),

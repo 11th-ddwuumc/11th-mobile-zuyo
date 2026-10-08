@@ -9,9 +9,11 @@ class MovieDetailInfo extends StatelessWidget{
   const MovieDetailInfo({
     super.key,
     required this.movie,
+    required this.genreNames,
   });
 
   final TmdbMovieDto movie;
+  final List<String> genreNames;
 
   @override
   Widget build(BuildContext context) {
@@ -78,24 +80,26 @@ class MovieDetailInfo extends StatelessWidget{
           ),
 
           // 장르 Chip
-          const SizedBox(height: 20),
-          // Wrap(
-          //   spacing: 8,
-          //   runSpacing: 8,
-          //   children: [
-          //     for (final label in [...movie.genres, ...movie.tags])
-          //       Chip(
-          //         label: Text(label),
-          //         labelStyle: AppTextStyles.labelLargeMedium.copyWith(
-          //           color: AppColors.textSecondary,
-          //         ),
-          //         backgroundColor: AppColors.highest,
-          //         side: BorderSide.none,
-          //         shape: const StadiumBorder(),
-          //         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          //       ),
-          //   ],
-          // ),
+          if(genreNames.isNotEmpty)...[
+            const SizedBox(height: 20),
+            Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final label in genreNames)
+                Chip(
+                  label: Text(label),
+                  labelStyle: AppTextStyles.labelLargeMedium.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  backgroundColor: AppColors.highest,
+                  side: BorderSide.none,
+                  shape: const StadiumBorder(),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ],
+            ),
+          ]
         ],
       ),
     );

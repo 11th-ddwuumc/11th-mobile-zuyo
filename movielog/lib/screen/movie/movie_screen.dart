@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
-import 'package:movielog/models/movie.dart';
 import 'package:movielog/screen/movie/widgets/movie_genre_filter.dart';
 import 'package:movielog/screen/movie/widgets/movie_grid.dart';
 import 'package:movielog/services/genre_preference.dart';
@@ -20,25 +19,12 @@ class MovieScreen extends StatefulWidget {
 }
 
 class _MovieScreenState extends State<MovieScreen> {
-  String selectedGenre = '전체';
-  final genres = ['전체', ...movies.expand((movie) => movie.genres).toSet()];
 
   final genrePreference = GenrePreference();
-
-  Future<void> _restoreGenre() async{
-    final savedGenre = await genrePreference.read();
-
-    if(!mounted) return;
-    
-    setState(() {
-      selectedGenre = savedGenre;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _restoreGenre();
   }
 
   @override
@@ -70,19 +56,18 @@ class _MovieScreenState extends State<MovieScreen> {
           child: Column(
             children: [
               // 장르 필터
-              MovieGenreFilter(
-                genres: genres,
-                selectedGenre: selectedGenre,
-                onSelected: (genre) async {
-                  setState(() {
-                    selectedGenre = genre;
-                  });
-
-                  await genrePreference.save(genre);
-                },
+              Consumer<MovieListViewModel>(
+                builder: (context, viewModel, child){
+                  return MovieGenreFilter(
+                    genres: viewModel.genres,
+                    selectedGenre: viewModel.selectedGenreId,
+                    isLoading: viewModel.status == MovieListLoadStatus.loading,
+                    onSelected: (genreId) => viewModel.selectGenre(genreId),
+                  );
+                }
               ),
+              
               const SizedBox(height: 16),
-
               // 영화 목록 그리드 
               Expanded(
                 child: Consumer<MovieListViewModel>(
@@ -105,6 +90,7 @@ class _MovieScreenState extends State<MovieScreen> {
                     
                       MovieListLoadStatus.success => MovieGrid(
                         movies: viewModel.movies,
+                        genreNamesFor: viewModel.genreNamesFor,
                       ),
                     };
                   },

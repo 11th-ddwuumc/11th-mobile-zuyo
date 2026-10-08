@@ -5,10 +5,16 @@ import 'package:movielog/theme/app_text_styles.dart';
 import 'package:movielog/widgets/tmdb_poster_image.dart';
 
 class MovieCard extends StatelessWidget {
-  const MovieCard({super.key, required this.movie, required this.onTap});
+  const MovieCard({
+    super.key, 
+    required this.movie, 
+    required this.genreNames,
+    required this.onTap
+  });
 
   final TmdbMovieDto movie;
   final VoidCallback onTap;
+  final List<String> genreNames;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +96,10 @@ class MovieCard extends StatelessWidget {
 
                 // 정보
                 Text(
-                  year,
+                  [
+                    year,
+                    if (genreNames.isNotEmpty) genreNames.first,
+                  ].join(' · '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   strutStyle: const StrutStyle(

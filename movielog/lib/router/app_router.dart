@@ -64,15 +64,21 @@ class AppRouter {
       GoRoute(
         path: '/movies/:movieId',
         builder: (context, state) {
-          final movie = state.extra;
-          
-          if (movie is! TmdbMovieDto) {
+          final extra = state.extra;
+
+          if (extra is! ({
+            TmdbMovieDto movie,
+            List<String> genreNames,
+          })) {
             return const Scaffold(
               body: Center(child: Text('영화 정보를 찾을 수 없습니다.')),
             );
           }
-          
-          return MovieDetailScreen(movie: movie);
+
+          return MovieDetailScreen(
+            movie: extra.movie,
+            genreNames: extra.genreNames,
+          );
         },
       ),
     ],

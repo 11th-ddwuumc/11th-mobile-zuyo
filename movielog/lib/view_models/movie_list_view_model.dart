@@ -87,6 +87,17 @@ class MovieListViewModel extends ChangeNotifier {
     if (!_disposed && version == _requestVersion) notifyListeners();
   }
 
+  List<String> genreNamesFor(TmdbMovieDto movie) {
+    final namesById = {
+      for (final genre in genres) genre.id: genre.name,
+    };
+
+    return [
+      for (final id in movie.genreIds)
+        if (namesById[id] != null) namesById[id]!,
+    ];
+  }
+
   @override
   void dispose() {
     _disposed = true;

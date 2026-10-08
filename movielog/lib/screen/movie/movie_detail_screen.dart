@@ -10,9 +10,10 @@ import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/widgets/tmdb_poster_image.dart';
 
 class MovieDetailScreen extends StatefulWidget {
-  const MovieDetailScreen({super.key, required this.movie});
+  const MovieDetailScreen({super.key, required this.movie, required this.genreNames});
 
   final TmdbMovieDto movie;
+  final List<String> genreNames;
 
   @override
   State<MovieDetailScreen> createState() => _MovieDetailScreenState();
@@ -98,7 +99,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
               ),
 
               // 정보
-              MovieDetailInfo(movie: movie),
+              MovieDetailInfo(movie: movie, genreNames: widget.genreNames),
               
               // 시놉시스
               const Divider(

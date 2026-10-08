@@ -81,10 +81,16 @@ class HomeScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
                         child: FeaturedMovieCard(
                           movie: movies.first,
-                          onTap: () => context.push('/movies/${movies.first.id}', extra: movies.first),
+                          onTap: () => context.push(
+                            '/movies/${movies.first.id}',
+                            extra: (
+                              movie: movies.first,
+                              genreNames: viewModel.genreNamesFor(movies.first),
+                            ),
+                          ),
                         ),
                       ),
-                      PopularMoviesSection(popularMovies: movies),
+                      PopularMoviesSection(popularMovies: movies, genreNamesFor: viewModel.genreNamesFor),
                     ],
                   ),
                 );
