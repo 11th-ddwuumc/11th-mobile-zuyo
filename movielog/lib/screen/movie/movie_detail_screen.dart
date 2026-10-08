@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
-import 'package:movielog/models/movie.dart';
 import 'package:movielog/screen/movie/widgets/movie_detail_actions.dart';
 import 'package:movielog/screen/movie/widgets/movie_detail_info.dart';
 import 'package:movielog/screen/movie/widgets/movie_synopsis.dart';
 import 'package:movielog/screen/movie/widgets/rating_dialog.dart';
 import 'package:movielog/theme/app_colors.dart';
+import 'package:movielog/widgets/tmdb_poster_image.dart';
 
 class MovieDetailScreen extends StatefulWidget {
-  const MovieDetailScreen({super.key, required this.movieId});
+  const MovieDetailScreen({super.key, required this.movie});
 
-  final String movieId;
+  final TmdbMovieDto movie;
 
   @override
   State<MovieDetailScreen> createState() => _MovieDetailScreenState();
@@ -24,7 +25,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
   Future<void> _openRatingDialog() async {
     final result = await showDialog<double>(
       context: context,
-      builder: (context) => const RatingDialog(),
+      builder: (context) => RatingDialog(movieId: widget.movie.id),
     );
 
     if (result == null || !mounted) return;
@@ -57,7 +58,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
 
   @override
   Widget build(BuildContext context) {
-    final movie = findMovieById(int.tryParse(widget.movieId));
+    final movie = widget.movie;
 
     return Scaffold(
       appBar: CommonAppBar(
@@ -79,36 +80,40 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
           ),
         ],
       ),
-      body: movie == null
-          ? const Center(child: Text('영화를 찾을 수 없습니다.'))
-          : SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // 영화 포스터
-                    AspectRatio(
-                      aspectRatio: 3 / 4,
-                      child: Image.asset(movie.posterAsset, fit: BoxFit.cover),
-                    ),
-
-                    // 정보
-                    MovieDetailInfo(movie: movie),
-                    
-                    // 시놉시스
-                    const Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Color(0xFFCBC4D2),
-                    ),
-                    MovieSynopsis(synopsis: movie.synopsis),
-                  ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 영화 포스터
+              AspectRatio(
+                aspectRatio: 3 / 4,
+                child: LayoutBuilder(
+                  builder: (context, constraints){
+                    return TmdbPosterImage(
+                      posterPath: movie.posterPath, width: constraints.maxWidth, height: constraints.maxHeight
+                    );
+                  }
                 ),
               ),
-            ),
+
+              // 정보
+              MovieDetailInfo(movie: movie),
+              
+              // 시놉시스
+              const Divider(
+                height: 1,
+                thickness: 1,
+                color: Color(0xFFCBC4D2),
+              ),
+              MovieSynopsis(synopsis: movie.overview),
+            ],
+          ),
+        ),
+      ),
       
       // 버튼 
-      bottomNavigationBar: movie == null ? null : Container(
+      bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: AppColors.base,
           border: Border(

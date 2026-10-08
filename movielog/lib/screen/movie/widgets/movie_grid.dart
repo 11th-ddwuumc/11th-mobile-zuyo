@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movielog/models/movie.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
 import 'package:movielog/screen/movie/widgets/movie_card.dart';
 
 class MovieGrid extends StatelessWidget {
@@ -9,7 +9,7 @@ class MovieGrid extends StatelessWidget {
     required this.movies,
   });
 
-  final List<Movie> movies;
+  final List<TmdbMovieDto> movies;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class MovieGrid extends StatelessWidget {
 
             return MovieCard(
               movie: movie,
-              onTap: () => context.push('/movies/${movie.id}'),
+              onTap: () => context.push('/movies/${movie.id}', extra: movie),
             );
           },
           

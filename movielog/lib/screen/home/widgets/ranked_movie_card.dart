@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:movielog/models/movie.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
+import 'package:movielog/widgets/tmdb_poster_image.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
@@ -12,7 +13,7 @@ class RankedMovieCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final Movie movie;
+  final TmdbMovieDto movie;
   final int rank;
   final VoidCallback onTap;
 
@@ -35,7 +36,7 @@ class RankedMovieCard extends StatelessWidget {
                   // 포스터
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Image.asset(movie.posterAsset, fit: BoxFit.cover),
+                    child: TmdbPosterImage(posterPath: movie.posterPath, width: 140, height: 200),
                   ),
 
                   // 순위
@@ -96,7 +97,7 @@ class RankedMovieCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 
                 Text(
-                  (movie.rating * 2).toStringAsFixed(1),
+                  movie.voteAverage.toStringAsFixed(1),
                   strutStyle: const StrutStyle(
                     fontSize: 12,
                     height: 16 / 12,
