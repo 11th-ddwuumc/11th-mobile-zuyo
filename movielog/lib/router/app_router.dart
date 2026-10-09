@@ -1,17 +1,23 @@
 import 'package:go_router/go_router.dart';
-import 'package:movielog/home/home_screen.dart';
-import 'package:movielog/main_screen.dart';
-import 'package:movielog/movie/movie_detail_screen.dart';
-import 'package:movielog/movie/movie_screen.dart';
-import 'package:movielog/profile/profile_screen.dart';
-import 'package:movielog/signup/signup_screen.dart';
-import 'package:movielog/start_screen.dart';
+import 'package:movielog/screen/home/home_screen.dart';
+import 'package:movielog/screen/main_screen.dart';
+import 'package:movielog/screen/movie/movie_detail_screen.dart';
+import 'package:movielog/screen/movie/movie_screen.dart';
+import 'package:movielog/screen/profile/profile_screen.dart';
+import 'package:movielog/screen/signup/signup_screen.dart';
+import 'package:movielog/screen/start_screen.dart';
+import 'package:movielog/services/tmdb_movie_service.dart';
+import 'package:movielog/view_models/movie_home_view_model.dart';
+import 'package:movielog/view_models/movie_list_view_model.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
 
 class AppRouter {
   AppRouter._();
 
   static final router = GoRouter(
-    initialLocation: '/start',
+    initialLocation: '/home',
     routes: [
       GoRoute(
         path: '/start',
@@ -32,11 +38,21 @@ class AppRouter {
         routes: [
           GoRoute(
             path: '/home',
-            builder: (context, state) => const HomeScreen(),
+            builder: (context, state) => ChangeNotifierProvider<MovieHomeViewModel>(
+              create: (context) => MovieHomeViewModel(
+                context.read<TmdbMovieService>(),
+              )..loadPopular(),
+              child: const HomeScreen(),
+            ),
           ),
           GoRoute(
             path: '/movies',
-            builder: (context, state) => const MovieScreen(),
+            builder: (context, state) => ChangeNotifierProvider<MovieListViewModel>(
+              create: (context) => MovieListViewModel(
+                context.read<TmdbMovieService>(),
+              )..loadInitial(),
+              child: const MovieScreen(),
+            ),
           ),
           GoRoute(
             path: '/my',
@@ -48,8 +64,20 @@ class AppRouter {
       GoRoute(
         path: '/movies/:movieId',
         builder: (context, state) {
+          final extra = state.extra;
+
+          if (extra is! ({
+            TmdbMovieDto movie,
+            List<String> genreNames,
+          })) {
+            return const Scaffold(
+              body: Center(child: Text('영화 정보를 찾을 수 없습니다.')),
+            );
+          }
+
           return MovieDetailScreen(
-            movieId: state.pathParameters['movieId']!,
+            movie: extra.movie,
+            genreNames: extra.genreNames,
           );
         },
       ),

@@ -1,24 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:movielog/movie_log_app.dart';
 
-void main() {
-  // // Dart 연습
-  // final List<Movie> movies = [
-  //   Movie(title: '치이카와 극장판:인어섬의 비밀'),
-  //   Movie(title: '호프'),
-  //   Movie(title: '옵세션'),
-  // ];
-  //
-  // for(final movie in movies){
-  //   print(movie.title);
-  // }
-  //
-  // // nullable 닉네임을 안전한 기본값으로 변환
-  // String displayName(String? nickname) {
-  //   return nickname?.trim().isNotEmpty == true ? nickname! : '이름 없음';
-  // }
-
-
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   runApp(const MovieLogApp());
 }
 

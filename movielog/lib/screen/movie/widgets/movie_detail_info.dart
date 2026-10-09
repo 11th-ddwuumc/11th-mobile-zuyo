@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:movielog/movie/movie.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
@@ -9,12 +9,19 @@ class MovieDetailInfo extends StatelessWidget{
   const MovieDetailInfo({
     super.key,
     required this.movie,
+    required this.genreNames,
   });
 
-  final Movie movie;
+  final TmdbMovieDto movie;
+  final List<String> genreNames;
 
   @override
   Widget build(BuildContext context) {
+    final releaseDate = movie.releaseDate;
+    final year = releaseDate != null && releaseDate.length >= 4
+      ? releaseDate.substring(0, 4)
+      : '개봉일 미정';
+
     return Padding(
       padding: EdgeInsetsGeometry.only(left: 16, right: 16, top:24, bottom: 40),
       child: Column(
@@ -31,12 +38,7 @@ class MovieDetailInfo extends StatelessWidget{
 
           // 정보
           Text(
-            [
-              '${movie.year}',
-              movie.genres.join('/'),
-              if (movie.runtimeMinutes != null)
-                '${movie.runtimeMinutes}분',
-            ].join(' · '),
+            year,
             style: AppTextStyles.bodyMediumRegular.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -48,7 +50,7 @@ class MovieDetailInfo extends StatelessWidget{
             spacing: 4,
             children: [
               RatingBarIndicator(
-                rating: movie.rating,
+                rating: (movie.voteAverage / 2),
                 itemCount: 5,
                 itemSize: 20,
                 itemBuilder: (context, index) => SvgPicture.asset(
@@ -62,14 +64,14 @@ class MovieDetailInfo extends StatelessWidget{
               const SizedBox(width: 8),
               
               Text(
-                '${movie.rating}',
+                (movie.voteAverage / 2).toStringAsFixed(1),
                 style: AppTextStyles.bodyLargeMedium.copyWith(
                   color: AppColors.neutral900
                 ),
               ),
 
               Text(
-                '(1,245)',
+                '(${movie.voteCount})',
                 style: AppTextStyles.labelLargeRegular.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -78,12 +80,13 @@ class MovieDetailInfo extends StatelessWidget{
           ),
 
           // 장르 Chip
-          const SizedBox(height: 20),
-          Wrap(
+          if(genreNames.isNotEmpty)...[
+            const SizedBox(height: 20),
+            Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final label in [...movie.genres, ...movie.tags])
+              for (final label in genreNames)
                 Chip(
                   label: Text(label),
                   labelStyle: AppTextStyles.labelLargeMedium.copyWith(
@@ -94,8 +97,9 @@ class MovieDetailInfo extends StatelessWidget{
                   shape: const StadiumBorder(),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-            ],
-          ),
+              ],
+            ),
+          ]
         ],
       ),
     );

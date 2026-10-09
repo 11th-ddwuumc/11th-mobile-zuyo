@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:movielog/common_app_bar.dart';
-import 'package:movielog/profile/favorite_genres.dart';
-import 'package:movielog/profile/profile_header.dart';
-import 'package:movielog/profile/stat_item.dart';
+import 'package:movielog/widgets/common_app_bar.dart';
+import 'package:movielog/screen/profile/widgets/favorite_genres.dart';
+import 'package:movielog/screen/profile/widgets/profile_header.dart';
+import 'package:movielog/screen/profile/widgets/stat_item.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
