@@ -4,29 +4,15 @@ import 'package:movielog/view_models/movie_list_view_model.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
 import 'package:movielog/screen/movie/widgets/movie_genre_filter.dart';
 import 'package:movielog/screen/movie/widgets/movie_grid.dart';
-import 'package:movielog/services/genre_preference.dart';
 import 'package:movielog/screen/movie/states/movie_list_empty.dart';
 import 'package:movielog/screen/movie/states/movie_list_error.dart';
 import 'package:movielog/screen/movie/states/movie_list_loading.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 
-class MovieScreen extends StatefulWidget {
+class MovieScreen extends StatelessWidget {
   const MovieScreen({super.key});
-
-  @override
-  State<MovieScreen> createState() => _MovieScreenState();
-}
-
-class _MovieScreenState extends State<MovieScreen> {
-
-  final genrePreference = GenrePreference();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -27,6 +27,7 @@ class TmdbLoggingInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     debugPrint('[TMDB 오류] ${err.requestOptions.uri}');
     debugPrint('[TMDB 오류 내용] ${err.message}');
+    debugPrint('[TMDB 오류 Status] ${err.response?.statusCode}');
     handler.next(err);
   }
 }
