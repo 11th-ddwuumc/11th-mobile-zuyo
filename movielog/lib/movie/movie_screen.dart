@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:movielog/common_app_bar.dart';
 import 'package:movielog/movie/movie.dart';
-import 'package:movielog/movie/movie_card.dart';
 import 'package:movielog/movie/movie_genre_filter.dart';
+import 'package:movielog/movie/movie_grid.dart';
+import 'package:movielog/movie/services/fake_movie_service.dart';
+import 'package:movielog/movie/services/genre_preference.dart';
+import 'package:movielog/movie/states/movie_list_empty.dart';
+import 'package:movielog/movie/states/movie_list_error.dart';
+import 'package:movielog/movie/states/movie_list_loading.dart';
 import 'package:movielog/theme/app_colors.dart';
 
 class MovieScreen extends StatefulWidget {
@@ -18,18 +22,37 @@ class _MovieScreenState extends State<MovieScreen> {
   String selectedGenre = '전체';
   final genres = ['전체', ...movies.expand((movie) => movie.genres).toSet()];
 
+  late Future<List<Movie>> _moviesFuture;
+
+  final FakeMovieService movieService = const FakeMovieService();
+
+  final genrePreference = GenrePreference();
+
+  void _retry() {
+    setState(() {
+      _moviesFuture = movieService.fetchMovies();
+    });
+  }
+
+  Future<void> _restoreGenre() async{
+    final savedGenre = await genrePreference.read();
+
+    if(!mounted) return;
+    
+    setState(() {
+      selectedGenre = savedGenre;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _moviesFuture = movieService.fetchMovies();
+    _restoreGenre();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Movie> filteredMovies;
-    
-    if (selectedGenre == '전체') {
-      filteredMovies = movies;
-    } else {
-      filteredMovies = movies
-        .where((movie) => movie.genres.contains(selectedGenre))
-        .toList();
-    }
-
     return Scaffold(
       appBar: CommonAppBar(
         title: '영화',
@@ -60,45 +83,44 @@ class _MovieScreenState extends State<MovieScreen> {
               MovieGenreFilter(
                 genres: genres,
                 selectedGenre: selectedGenre,
-                onSelected: (genre) {
+                onSelected: (genre) async {
                   setState(() {
                     selectedGenre = genre;
                   });
+
+                  await genrePreference.save(genre);
                 },
               ),
               const SizedBox(height: 16),
 
+              // 영화 목록 그리드 
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    const columnSpacing = 16.0; // 옆 카드와의 간격
-                    final cardWidth = (constraints.maxWidth - columnSpacing) / 2;
+                child: FutureBuilder<List<Movie>>(
+                  future: _moviesFuture, 
+                  builder: (context, snapshot){
+        
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const MovieListLoading();
+                    }
                     
-                    // 포스터 2:3 + 간격 4(포스터랑 제목) + 위 패딩 8(제목 위의) + 텍스트 두 줄
-                    final posterHeight = cardWidth * 1.5; // 포스터 비율 2:3
-                    final infoHeight = 8.0 + 24.0 + 24.0;
-                    final cardHeight = posterHeight + 4.0 + infoHeight;
+                    if (snapshot.hasError) {
+                      return MovieListError(onRetry: _retry);
+                    }
 
-                    // 영화 카드
-                    return GridView.builder(
-                      padding: EdgeInsets.only(bottom: 16),
-                      itemCount: filteredMovies.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: columnSpacing,
-                        mainAxisSpacing: 24, // 밑의 카드와의 간격
-                        mainAxisExtent: cardHeight,
-                      ),
-                      itemBuilder: (context, index) {
-                        final movie = filteredMovies[index];
-                        return MovieCard(
-                          movie: movie,
-                          onTap: () => context.push('/movies/${movie.id}'),
-                        );
-                      },
-                    );
-                  },
-                ),
+                    final movies = snapshot.data ?? const <Movie>[];
+                    
+                    final filteredMovies = selectedGenre == '전체' 
+                      ? movies 
+                      : movies
+                      .where((movie) => movie.genres.contains(selectedGenre)).toList();
+                    
+                    if (filteredMovies.isEmpty) {
+                      return const MovieListEmpty();
+                    }
+                    
+                    return MovieGrid(movies: filteredMovies);
+                  }
+                )
               ),
             ],
           ),
