@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class MovieScreen extends StatelessWidget {
   const MovieScreen({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +59,7 @@ class MovieScreen extends StatelessWidget {
                 child: Consumer<MovieListViewModel>(
                   builder: (context, viewModel, child) {
                     return switch (viewModel.status) {
+                      
                       MovieListLoadStatus.idle ||
                       MovieListLoadStatus.loading => const MovieListLoading(),
                     
@@ -78,6 +79,7 @@ class MovieScreen extends StatelessWidget {
                         movies: viewModel.movies,
                         genreNamesFor: viewModel.genreNamesFor,
                       ),
+                      
                     };
                   },
                 ),
