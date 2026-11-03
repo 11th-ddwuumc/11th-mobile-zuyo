@@ -16,6 +16,8 @@ class SignupField extends StatelessWidget {
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
+    this.errorText,
+    this.showLabel = true,
   });
 
   final String label;
@@ -28,23 +30,27 @@ class SignupField extends StatelessWidget {
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onFieldSubmitted;
+  final String? errorText;
+  final bool showLabel;
 
   @override
   Widget build(BuildContext context) {
-    final errorMessage = validator(controller.text);
+    final localError = validator(controller.text);
+    final errorMessage = errorText ?? localError;
     final isValid = errorMessage == null;
-    final hasError = showValidation && !isValid;
+    final hasError = errorText != null || (showValidation && localError != null);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 4,
       children: [
-        Text(
-          label,
-          style: AppTextStyles.bodyLargeMedium.copyWith(
-            color: AppColors.textPrimary,
+        if (showLabel)
+          Text(
+            label,
+            style: AppTextStyles.bodyLargeMedium.copyWith(
+              color: AppColors.textPrimary,
+            ),
           ),
-        ),
         TextFormField(
           obscureText: obscureText,
           controller: controller,
@@ -60,6 +66,7 @@ class SignupField extends StatelessWidget {
             color: AppColors.textPrimary,
           ),
           decoration: InputDecoration(
+            errorText: errorText,
             hintText: hint,
             hintStyle: AppTextStyles.bodyLargeMedium.copyWith(
               color: AppColors.neutral800,
@@ -106,16 +113,7 @@ class SignupField extends StatelessWidget {
                   )
                 : null,
           ),
-          errorBuilder: (context, errorText) => const SizedBox.shrink(),
         ),
-        if (hasError)
-          Text(
-            errorMessage,
-            style: AppTextStyles.labelSmallMedium.copyWith(
-              fontSize: 12,
-              color: AppColors.error,
-            ),
-          ),
       ],
     );
   }

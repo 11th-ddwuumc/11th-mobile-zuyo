@@ -6,9 +6,11 @@ import 'package:movielog/screen/movie/movie_screen.dart';
 import 'package:movielog/screen/profile/profile_screen.dart';
 import 'package:movielog/screen/signup/signup_screen.dart';
 import 'package:movielog/screen/start_screen.dart';
+import 'package:movielog/services/member_check_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
+import 'package:movielog/view_models/signup_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:movielog/models/tmdb_movie_dto.dart';
@@ -17,7 +19,7 @@ class AppRouter {
   AppRouter._();
 
   static final router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/start',
     routes: [
       GoRoute(
         path: '/start',
@@ -25,9 +27,13 @@ class AppRouter {
       ),
       GoRoute(
         path: '/signup',
-        builder: (context, state) => const SignupScreen(),
+        builder: (context, state) => ChangeNotifierProvider<SignUpViewModel>(
+          create: (context) => SignUpViewModel(
+            context.read<MemberCheckService>(),
+          ),
+          child: const SignupScreen(),
+        ),
       ),
-
       ShellRoute(
         builder: (context, state, child) {
           return MainScreen(
