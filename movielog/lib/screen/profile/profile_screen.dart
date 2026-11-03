@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:movielog/screen/profile/widgets/profile_menu_tile.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
 import 'package:movielog/screen/profile/widgets/favorite_genres.dart';
 import 'package:movielog/screen/profile/widgets/profile_header.dart';
@@ -38,6 +40,11 @@ class ProfileScreen extends StatelessWidget {
                   Expanded(child: StatItem(label: '평점', value: '4.2')),
                   Expanded(child: StatItem(label: '즐겨찾기', value: '58')),
                 ],
+              ),
+              // 내가 등록한 평점
+              ProfileMenuTile(
+                title: '내가 등록한 평점',
+                onTap: () => context.push('/my/ratings'),
               ),
               // 선호 장르
               FavoriteGenres()

@@ -3,13 +3,16 @@ import 'package:movielog/screen/home/home_screen.dart';
 import 'package:movielog/screen/main_screen.dart';
 import 'package:movielog/screen/movie/movie_detail_screen.dart';
 import 'package:movielog/screen/movie/movie_screen.dart';
+import 'package:movielog/screen/profile/my_rating_screen.dart';
 import 'package:movielog/screen/profile/profile_screen.dart';
 import 'package:movielog/screen/signup/signup_screen.dart';
 import 'package:movielog/screen/start_screen.dart';
 import 'package:movielog/services/member_check_service.dart';
+import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
+import 'package:movielog/view_models/my_rating_view_model.dart';
 import 'package:movielog/view_models/signup_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +21,11 @@ import 'package:movielog/models/tmdb_movie_dto.dart';
 class AppRouter {
   AppRouter._();
 
+  static final rootNavigatorKey = GlobalKey<NavigatorState>();
+
   static final router = GoRouter(
     initialLocation: '/start',
+    navigatorKey: rootNavigatorKey,
     routes: [
       GoRoute(
         path: '/start',
@@ -63,6 +69,20 @@ class AppRouter {
           GoRoute(
             path: '/my',
             builder: (context, state) => const ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: 'ratings', // 최종 경로: /my/ratings
+                parentNavigatorKey: rootNavigatorKey, // root Navigator 위에 표시해 하단 NavigationBar를 가립니다.
+                builder: (context, state) => ChangeNotifierProvider<MyRatingsViewModel>(
+                  create: (context) => MyRatingsViewModel(
+                    context.read<RatingApiService>(),
+                    context.read<TmdbMovieService>(),
+                    sampleMemberId, // 6주차는 학습용 ID 1입니다.
+                  )..load(),
+                  child: MyRatingsScreen(),
+                ),
+              ),
+            ]
           ),
         ],
       ),
