@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movielog/movie/movie.dart';
-import 'package:movielog/movie/movie_card.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
+import 'package:movielog/screen/movie/widgets/movie_card.dart';
 
 class MovieGrid extends StatelessWidget {
   const MovieGrid({
     super.key,
     required this.movies,
+    required this.genreNamesFor,
   });
 
-  final List<Movie> movies;
+  final List<TmdbMovieDto> movies;
+  final List<String> Function(TmdbMovieDto) genreNamesFor;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,11 @@ class MovieGrid extends StatelessWidget {
 
             return MovieCard(
               movie: movie,
-              onTap: () => context.push('/movies/${movie.id}'),
+              genreNames: genreNamesFor(movie),
+              onTap: () => context.push(
+                '/movies/${movie.id}', 
+                extra: (movie: movie, genreNames: genreNamesFor(movie))
+              ),
             );
           },
           

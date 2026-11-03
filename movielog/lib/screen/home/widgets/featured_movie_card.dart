@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:movielog/movie/movie.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
+import 'package:movielog/widgets/tmdb_poster_image.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
@@ -11,7 +12,7 @@ class FeaturedMovieCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final Movie movie;
+  final TmdbMovieDto movie;
   final VoidCallback onTap;
 
   @override
@@ -25,7 +26,13 @@ class FeaturedMovieCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.asset(movie.posterAsset, fit: BoxFit.cover),
+              LayoutBuilder(
+                builder: (context, constraints) => TmdbPosterImage(
+                  posterPath: movie.posterPath,
+                  width: constraints.maxWidth,
+                  height: constraints.maxHeight,
+                ),
+              ),
               const ColoredBox(color: Color(0xB2000000)),
               Positioned(
                 left: 24,
@@ -64,13 +71,11 @@ class FeaturedMovieCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
 
-                    // 영화 장르 및 러닝타임
+                    // 개봉일
                     Text(
-                      [
-                        ...movie.genres,
-                        if (movie.runtimeMinutes != null)
-                          '${movie.runtimeMinutes}분',
-                      ].join(' · '),
+                      movie.releaseDate?.isNotEmpty == true
+                          ? movie.releaseDate!
+                          : '개봉일 미정',
                       style: AppTextStyles.bodyLargeRegular.copyWith(
                         color: AppColors.lowest,
                       ),

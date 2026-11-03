@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:movielog/home/ranked_movie_card.dart';
-import 'package:movielog/movie/movie.dart';
+import 'package:movielog/screen/home/widgets/ranked_movie_card.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
 
 class PopularMoviesSection extends StatelessWidget {
-  const PopularMoviesSection({super.key});
+  const PopularMoviesSection({super.key, required this.popularMovies, required this.genreNamesFor});
+
+  final List<TmdbMovieDto> popularMovies;
+  final List<String> Function(TmdbMovieDto) genreNamesFor;
 
   @override
   Widget build(BuildContext context) {
-    final popularMovies = [
-      for (final id in [7, 8, 9])
-        if (findMovieById(id) case final Movie movie) movie,
-    ];
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -77,7 +76,13 @@ class PopularMoviesSection extends StatelessWidget {
                 return RankedMovieCard(
                   movie: movie,
                   rank: index + 1,
-                  onTap: () => context.push('/movies/${movie.id}'),
+                  onTap: () => context.push(
+                    '/movies/${movie.id}',
+                    extra: (
+                      movie: movie,
+                      genreNames: genreNamesFor(movie),
+                    ),
+                  ),
                 );
               },
             ),

@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:movielog/movie/movie.dart';
+import 'package:movielog/models/tmdb_movie_dto.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
+import 'package:movielog/widgets/tmdb_poster_image.dart';
 
 class MovieCard extends StatelessWidget {
-  const MovieCard({super.key, required this.movie, required this.onTap});
+  const MovieCard({
+    super.key, 
+    required this.movie, 
+    required this.genreNames,
+    required this.onTap
+  });
 
-  final Movie movie;
+  final TmdbMovieDto movie;
   final VoidCallback onTap;
+  final List<String> genreNames;
 
   @override
   Widget build(BuildContext context) {
+    final releaseDate = movie.releaseDate;
+    final year = releaseDate != null && releaseDate.length >= 4
+      ? releaseDate.substring(0, 4)
+      : '개봉일 미정';
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -24,7 +36,13 @@ class MovieCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(movie.posterAsset, fit: BoxFit.cover),
+                  child: LayoutBuilder(
+                    builder: (context, constraints){
+                      return TmdbPosterImage(
+                        posterPath: movie.posterPath, width: constraints.maxWidth, height: constraints.maxHeight
+                      );
+                    }
+                  )
                 ),
 
                 Positioned(
@@ -40,7 +58,7 @@ class MovieCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '★ ${movie.rating.toStringAsFixed(1)}',
+                          '★ ${(movie.voteAverage / 2).toStringAsFixed(1)}',
                           style: AppTextStyles.labelSmallBold.copyWith(
                             color: Color(0xFFF5EFF7),
                             fontSize: 12,
@@ -78,7 +96,10 @@ class MovieCard extends StatelessWidget {
 
                 // 정보
                 Text(
-                  ['${movie.year}', movie.genres.first].join(' · '),
+                  [
+                    year,
+                    if (genreNames.isNotEmpty) genreNames.first,
+                  ].join(' · '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   strutStyle: const StrutStyle(

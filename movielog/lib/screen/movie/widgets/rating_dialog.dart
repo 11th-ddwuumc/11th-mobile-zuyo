@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:movielog/movie/movie_rating_input.dart';
+import 'package:movielog/screen/movie/widgets/movie_rating_input.dart';
 import 'package:movielog/theme/app_colors.dart';
 
 class RatingDialog extends StatefulWidget {
-  const RatingDialog({super.key});
+  const RatingDialog({super.key, required this.movieId});
+
+  final int movieId;
 
   @override
   State<RatingDialog> createState() => _RatingDialogState();
