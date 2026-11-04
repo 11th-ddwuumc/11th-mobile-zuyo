@@ -29,37 +29,65 @@ class MyRatingsViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       final rawRatings = await _service.fetchMyRatings(memberId);
-      if (_disposed || version != _requestVersion) return;
+      if (_disposed || version != _requestVersion) {
+        return;
+      }
       final entries = <RatingWithMovie>[];
       var missingMovies = 0;
-      // 같은 movieId는 캐시를 사용하고, 영화 조회 실패가 평점 목록을 지우지 않습니다.
-      for (final rating in rawRatings) {
-        if (_disposed || version != _requestVersion) return;
-        if (!_movieCache.containsKey(rating.movieId)) {
-          try {
-            _movieCache[rating.movieId] =
-                await _movieService.findMovieById(rating.movieId);
-          } on DioException {
-            // 일시적 네트워크 실패는 캐시하지 않습니다. 다음 로딩에서 재시도합니다.
+      // 중복 ID를 제거하고 영화 정보를 병렬 조회합니다.
+      final movieIds = rawRatings.map((rating) => rating.movieId).toSet();
+      await Future.wait(
+        movieIds.map((movieId) async {
+          if (_movieCache.containsKey(movieId)) {
+            return;
           }
-        }
+          try {
+            final movie = await _movieService.findMovieById(movieId);
+            if (_disposed || version != _requestVersion) {
+              return;
+            }
+            _movieCache[movieId] = movie;
+          } catch (_) {
+            // 영화 정보 오류가 평점 목록을 지우지 않으며 다음 조회에서 재시도합니다.
+          }
+        }),
+      );
+      if (_disposed || version != _requestVersion) {
+        return;
+      }
+      for (final rating in rawRatings) {
         final movie = _movieCache[rating.movieId];
-        if (movie == null) missingMovies++;
+        if (movie == null) {
+          missingMovies++;
+        }
         entries.add(RatingWithMovie(rating: rating, movie: movie));
       }
-      if (_disposed || version != _requestVersion) return;
+      if (_disposed || version != _requestVersion) {
+        return;
+      }
       ratings = entries;
       status = entries.isEmpty
-          ? MyRatingsLoadStatus.empty : MyRatingsLoadStatus.success;
+          ? MyRatingsLoadStatus.empty
+          : MyRatingsLoadStatus.success;
       if (missingMovies > 0) {
         message = '일부 영화 정보를 가져오지 못해 제목·포스터를 대신 표시합니다.';
       }
     } on DioException catch (error) {
-      if (_disposed || version != _requestVersion) return;
+      if (_disposed || version != _requestVersion) {
+        return;
+      }
       status = MyRatingsLoadStatus.error;
       message = writeMyRatingsErrorMessage(error);
+    } catch (_) {
+      if (_disposed || version != _requestVersion) {
+        return;
+      }
+      status = MyRatingsLoadStatus.error;
+      message = '평점을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
     }
-    if (!_disposed && version == _requestVersion) notifyListeners();
+    if (!_disposed && version == _requestVersion) {
+      notifyListeners();
+    }
   }
 
   @override

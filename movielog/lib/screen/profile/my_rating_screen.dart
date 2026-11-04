@@ -5,16 +5,13 @@ import 'package:movielog/widgets/common_app_bar.dart';
 import 'package:movielog/widgets/movielog_button.dart';
 import 'package:provider/provider.dart';
 
-class MyRatingsScreen extends StatelessWidget{
+class MyRatingsScreen extends StatelessWidget {
   const MyRatingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CommonAppBar(
-        title: '내가 등록한 평점',
-        centerTitle: true,
-      ),
+      appBar: const CommonAppBar(title: '내가 등록한 평점', centerTitle: true),
       body: SafeArea(
         child: Consumer<MyRatingsViewModel>(
           builder: (context, viewModel, child) {
@@ -45,13 +42,26 @@ class MyRatingsScreen extends StatelessWidget{
                   ),
                 );
               case MyRatingsLoadStatus.success:
-                return ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(20, 32, 20, 32),
-                  itemCount: viewModel.ratings.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 18),
-                  itemBuilder: (context, index) =>
-                      MyRatingCard(entry: viewModel.ratings[index]),
+                return RefreshIndicator(
+                  onRefresh: viewModel.load,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(20, 32, 20, 32),
+                    children: [
+                      if (viewModel.message != null) ...[
+                        Text(viewModel.message!),
+                        const SizedBox(height: 18),
+                      ],
+                      for (
+                        var index = 0;
+                        index < viewModel.ratings.length;
+                        index++
+                      ) ...[
+                        if (index > 0) const SizedBox(height: 18),
+                        MyRatingCard(entry: viewModel.ratings[index]),
+                      ],
+                    ],
+                  ),
                 );
             }
           },
@@ -59,5 +69,4 @@ class MyRatingsScreen extends StatelessWidget{
       ),
     );
   }
-  
 }

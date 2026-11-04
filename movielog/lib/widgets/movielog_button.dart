@@ -36,10 +36,11 @@ class MovieLogButton extends StatelessWidget {
           ),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 18,
                 height: 18,
                 child: CircularProgressIndicator(
+                  semanticsLabel: label,
                   strokeWidth: 2,
                   color: AppColors.lowest,
                 ),
