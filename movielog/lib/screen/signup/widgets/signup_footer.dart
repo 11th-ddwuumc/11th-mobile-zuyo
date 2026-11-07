@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
+import 'package:movielog/widgets/movielog_button.dart';
 
 class SignupFooter extends StatelessWidget {
   const SignupFooter({
@@ -47,25 +48,11 @@ class SignupFooter extends StatelessWidget {
 
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: ElevatedButton(
+            child: MovieLogButton(
+              label: '가입하기',
+              width: double.infinity,
+              disabledBackgroundColor: const Color(0xFFD3C6E2),
               onPressed: onSubmit,
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: AppColors.primary500,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: AppColors.secondary300,
-                disabledForegroundColor: AppColors.lowest,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(
-                '가입하기',
-                style: AppTextStyles.bodyLargeMedium.copyWith(
-                  color: AppColors.lowest,
-                ),
-              ),
             ),
           ),
 

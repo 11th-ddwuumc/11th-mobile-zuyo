@@ -8,6 +8,8 @@ abstract final class AppColors {
   static const textPrimary = Color(0XFF1D1B20);
   // 아이콘 선택 시
   static const selectedIcon = Color(0XFF686177);
+  // 버튼 로딩 (확인 중)
+  static const buttonLoading = Color(0xFF79747E);
 
   // Primary
   static const primary100 = Color(0xFFF3EFFF);
