@@ -6,6 +6,7 @@ import 'package:movielog/services/sign_up_service.dart';
 import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/theme/app_theme.dart';
+import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:provider/provider.dart';
 
 class MovieLogApp extends StatelessWidget {
@@ -25,6 +26,9 @@ class MovieLogApp extends StatelessWidget {
         ),
         Provider<RatingApiService>(
           create: (_) => RatingApiService(movieLogClient),
+        ),
+        ChangeNotifierProvider<LearningMemberSession>(
+          create: (_) => LearningMemberSession(),
         ),
       ],
       child: MaterialApp.router(

@@ -10,6 +10,7 @@ import 'package:movielog/screen/start_screen.dart';
 import 'package:movielog/services/sign_up_service.dart';
 import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
+import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
 import 'package:movielog/view_models/my_ratings_view_model.dart';
@@ -72,15 +73,24 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: 'ratings', // 최종 경로: /my/ratings
-                parentNavigatorKey: rootNavigatorKey, // root Navigator 위에 표시해 하단 NavigationBar를 가립니다.
-                builder: (context, state) => ChangeNotifierProvider<MyRatingsViewModel>(
-                  create: (context) => MyRatingsViewModel(
-                    context.read<RatingApiService>(),
-                    context.read<TmdbMovieService>(),
-                    sampleMemberId, // 6주차는 학습용 ID 1입니다.
-                  )..load(),
-                  child: MyRatingsScreen(),
-                ),
+                parentNavigatorKey: AppRouter.rootNavigatorKey, // root Navigator 위에 표시해 하단 NavigationBar를 가립니다.
+                builder: (context, state) {
+                  final id = context.read<LearningMemberSession>().memberId;
+                  if (id == null) {
+                    return Scaffold(
+                      appBar: AppBar(centerTitle: true, title: const Text('내가 등록한 평점')),
+                      body: const Center(child: Text('학습용 회원가입이 필요합니다.')),
+                    );
+                  }
+                  return ChangeNotifierProvider<MyRatingsViewModel>(
+                    create: (context) => MyRatingsViewModel(
+                      context.read<RatingApiService>(),
+                      context.read<TmdbMovieService>(),
+                      id,
+                    )..load(),
+                    child: const MyRatingsScreen(),
+                  );
+                },
               ),
             ]
           ),
