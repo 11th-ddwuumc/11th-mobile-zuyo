@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:movielog/models/rating_dto.dart';
+import 'package:movielog/screen/profile/widgets/delete_rating_dialog.dart';
+import 'package:movielog/screen/movie/widgets/rating_dialog.dart';
 import 'package:movielog/screen/profile/widgets/my_rating_card.dart';
 import 'package:movielog/view_models/my_ratings_view_model.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
@@ -29,12 +32,16 @@ class MyRatingsScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          viewModel.message ?? '평점을 불러오지 못했습니다.',
+                          viewModel.refreshWarning ??
+                              viewModel.message ??
+                              '평점을 불러오지 못했습니다.',
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
                         MovieLogButton(
-                          label: '다시 시도',
+                          label: viewModel.refreshWarning != null
+                              ? '목록 다시 불러오기'
+                              : '다시 시도',
                           onPressed: viewModel.load,
                         ),
                       ],
@@ -57,8 +64,18 @@ class MyRatingsScreen extends StatelessWidget {
                         index < viewModel.ratings.length;
                         index++
                       ) ...[
-                        if (index > 0) const SizedBox(height: 18),
-                        MyRatingCard(entry: viewModel.ratings[index]),
+                        if (index > 0) const SizedBox(height: 16),
+                        MyRatingCard(
+                          entry: viewModel.ratings[index],
+                          onEdit: () => onEditPressed(
+                            context,
+                            viewModel.ratings[index].rating,
+                          ),
+                          onDelete: () => onDeletePressed(
+                            context,
+                            viewModel.ratings[index].rating,
+                          ),
+                        ),
                       ],
                     ],
                   ),
@@ -66,6 +83,38 @@ class MyRatingsScreen extends StatelessWidget {
             }
           },
         ),
+      ),
+    );
+  }
+
+  Future<void> onEditPressed(
+    BuildContext context,
+    RatingDto rating,
+  ) async {
+    final saved = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => RatingDialog(
+        initialScore: rating.score,
+        initialComment: rating.comment,
+        onSubmit: (score, comment) =>
+            context.read<MyRatingsViewModel>().updateRating(
+              ratingId: rating.ratingId,
+              score: score,
+              comment: comment,
+            ),
+      ),
+    );
+
+    if (!context.mounted || saved != true) return;
+  }
+
+  Future<void> onDeletePressed(BuildContext context, RatingDto rating) async {
+    await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => DeleteRatingDialog(
+        onConfirm: () => context.read<MyRatingsViewModel>().deleteRating(rating.ratingId),
       ),
     );
   }

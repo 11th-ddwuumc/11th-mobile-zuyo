@@ -3,7 +3,7 @@ import 'package:movielog/screen/home/home_screen.dart';
 import 'package:movielog/screen/main_screen.dart';
 import 'package:movielog/screen/movie/movie_detail_loader.dart';
 import 'package:movielog/screen/movie/movie_screen.dart';
-import 'package:movielog/screen/profile/my_rating_screen.dart';
+import 'package:movielog/screen/profile/my_ratings_screen.dart';
 import 'package:movielog/screen/profile/profile_screen.dart';
 import 'package:movielog/screen/signup/signup_screen.dart';
 import 'package:movielog/screen/start_screen.dart';
