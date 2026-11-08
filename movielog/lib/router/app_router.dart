@@ -7,7 +7,7 @@ import 'package:movielog/screen/profile/my_rating_screen.dart';
 import 'package:movielog/screen/profile/profile_screen.dart';
 import 'package:movielog/screen/signup/signup_screen.dart';
 import 'package:movielog/screen/start_screen.dart';
-import 'package:movielog/services/member_check_service.dart';
+import 'package:movielog/services/sign_up_service.dart';
 import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
@@ -35,7 +35,7 @@ class AppRouter {
         path: '/signup',
         builder: (context, state) => ChangeNotifierProvider<SignUpViewModel>(
           create: (context) => SignUpViewModel(
-            context.read<MemberCheckService>(),
+            context.read<SignUpService>(),
           ),
           child: const SignupScreen(),
         ),
