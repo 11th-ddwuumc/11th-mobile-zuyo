@@ -12,7 +12,7 @@ import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
-import 'package:movielog/view_models/my_rating_view_model.dart';
+import 'package:movielog/view_models/my_ratings_view_model.dart';
 import 'package:movielog/view_models/signup_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movielog/screen/profile/widgets/my_rating_card.dart';
-import 'package:movielog/view_models/my_rating_view_model.dart';
+import 'package:movielog/view_models/my_ratings_view_model.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
 import 'package:movielog/widgets/movielog_button.dart';
 import 'package:provider/provider.dart';
