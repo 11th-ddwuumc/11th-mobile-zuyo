@@ -8,25 +8,33 @@ class MovieRatingInput extends StatelessWidget {
     super.key,
     required this.rating,
     required this.onChanged,
+    this.enabled = true,
   });
 
   final double rating;
   final ValueChanged<double> onChanged;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
-    return RatingBar.builder(
+    return RatingBar(
       initialRating: rating,
-      minRating: 0.5,
-      allowHalfRating: true,
+      minRating: 1,
+      allowHalfRating: false,
+      ignoreGestures: !enabled,
       itemCount: 5,
       itemSize: 40,
-      itemBuilder: (context, index) {
-        return SvgPicture.asset(
+      ratingWidget: RatingWidget(
+        full: SvgPicture.asset(
           'assets/icons/star_filled.svg',
-          colorFilter: ColorFilter.mode(AppColors.primary500, BlendMode.srcIn),
-        );
-      },
+          colorFilter: const ColorFilter.mode(
+            AppColors.primary500,
+            BlendMode.srcIn,
+          ),
+        ),
+        half: const Icon(Icons.star_half, color: AppColors.primary500),
+        empty: const Icon(Icons.star_border, color: AppColors.primary500),
+      ),
       onRatingUpdate: onChanged,
     );
   }

@@ -42,7 +42,7 @@ class MovieGrid extends StatelessWidget {
               genreNames: genreNamesFor(movie),
               onTap: () => context.push(
                 '/movies/${movie.id}', 
-                extra: (movie: movie, genreNames: genreNamesFor(movie))
+                extra: movie
               ),
             );
           },

@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:movielog/screen/home/home_screen.dart';
 import 'package:movielog/screen/main_screen.dart';
-import 'package:movielog/screen/movie/movie_detail_screen.dart';
+import 'package:movielog/screen/movie/movie_detail_loader.dart';
 import 'package:movielog/screen/movie/movie_screen.dart';
 import 'package:movielog/screen/profile/my_rating_screen.dart';
 import 'package:movielog/screen/profile/profile_screen.dart';
@@ -66,7 +66,33 @@ class AppRouter {
               )..loadInitial(),
               child: const MovieScreen(),
             ),
+            routes: [
+              GoRoute(
+                path: ':movieId',
+                parentNavigatorKey: rootNavigatorKey,
+                builder: (context, state) {
+                  final id = int.tryParse(
+                    state.pathParameters['movieId'] ?? '',
+                  );
+
+                  if (id == null || id < 1) {
+                    return const Scaffold(
+                      body: Center(child: Text('영화 ID가 올바르지 않습니다.')),
+                    );
+                  }
+
+                  final extra = state.extra;
+
+                  return MovieDetailLoader(
+                    movieId: id,
+                    initialMovie:
+                        extra is TmdbMovieDto && extra.id == id ? extra : null,
+                  );
+                },
+              ),
+            ]
           ),
+          
           GoRoute(
             path: '/my',
             builder: (context, state) => const ProfileScreen(),
@@ -95,27 +121,6 @@ class AppRouter {
             ]
           ),
         ],
-      ),
-
-      GoRoute(
-        path: '/movies/:movieId',
-        builder: (context, state) {
-          final extra = state.extra;
-
-          if (extra is! ({
-            TmdbMovieDto movie,
-            List<String> genreNames,
-          })) {
-            return const Scaffold(
-              body: Center(child: Text('영화 정보를 찾을 수 없습니다.')),
-            );
-          }
-
-          return MovieDetailScreen(
-            movie: extra.movie,
-            genreNames: extra.genreNames,
-          );
-        },
       ),
     ],
   );
