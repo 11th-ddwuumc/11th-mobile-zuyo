@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:movielog/screen/home/home_screen.dart';
+import 'package:movielog/screen/login/login_screen.dart';
 import 'package:movielog/screen/main_screen.dart';
 import 'package:movielog/screen/movie/movie_detail_loader.dart';
 import 'package:movielog/screen/movie/movie_screen.dart';
@@ -50,10 +51,10 @@ class AppRouter {
             );
           }
         ),
-        // GoRoute(
-        //   path: '/login',
-        //   builder:(context, state) => const LoginScreen(),
-        // ),
+        GoRoute(
+          path: '/login',
+          builder:(context, state) => const LoginScreen(),
+        ),
         GoRoute(
           path: '/signup',
           builder: (context, state) => ChangeNotifierProvider<SignUpViewModel>(
