@@ -33,13 +33,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
   bool isBookmark = false;
 
   Future<void> _openRatingDialog() async {
+    final viewModel = context.read<MovieDetailViewModel>();
+    final currentRating = viewModel.rating;
     final saved = await showDialog<bool>(
       context: context,
       barrierDismissible: false, 
       builder: (_) => RatingDialog(
+        initialScore: currentRating?.score ?? 0,
+        initialComment: currentRating?.comment,
         onSubmit: (score, comment) async {
-          final viewModel = context.read<MovieDetailViewModel>();
-          await viewModel.createRating(score: score, comment: comment);
+          if (currentRating == null) {
+            await viewModel.createRating(score: score, comment: comment);
+          } else {
+            await viewModel.updateRating(score: score, comment: comment);
+          }
           if (viewModel.submitStatus != SubmitStatus.success) {
             throw StateError(viewModel.submitMessage ?? '저장에 실패했습니다.');
           }
@@ -50,8 +57,47 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
     if (!mounted || saved != true) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('평점을 등록했습니다. 마이페이지에서 확인해 주세요.'),
+      SnackBar(
+        content: Text(
+          currentRating == null ? '평점이 등록됐습니다.' : '평점이 수정됐습니다.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _deleteRating() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('평점을 삭제할까요?'),
+        content: const Text('삭제한 평점은 되돌릴 수 없어요.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('삭제'),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted || confirmed != true) return;
+
+    final viewModel = context.read<MovieDetailViewModel>();
+    await viewModel.deleteRating();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          viewModel.submitStatus == SubmitStatus.success
+              ? '평점을 삭제했어요.'
+              : viewModel.submitMessage ?? '평점을 삭제하지 못했어요.',
+        ),
       ),
     );
   }
@@ -134,6 +180,28 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
                     color: Color(0xFFCBC4D2),
                   ),
                   MovieSynopsis(synopsis: movie.overview),
+                  if (viewModel.rating case final rating?)
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('내 평점'),
+                          const SizedBox(height: 8),
+                          Text('★ ${rating.score} / 5'),
+                          if (rating.comment?.isNotEmpty == true) ...[
+                            const SizedBox(height: 8),
+                            Text(rating.comment!),
+                          ],
+                          TextButton(
+                            onPressed: viewModel.submitStatus == SubmitStatus.submitting
+                                ? null
+                                : _deleteRating,
+                            child: const Text('평점 삭제'),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),

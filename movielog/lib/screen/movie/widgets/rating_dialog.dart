@@ -183,7 +183,9 @@ class _RatingDialogState extends State<RatingDialog> {
       if (!mounted) return;
       setState(() {
         _isSubmitting = false;
-        _errorText = '저장하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+        _errorText = error is StateError
+            ? error.message.toString()
+            : '저장하지 못했습니다. 잠시 후 다시 시도해 주세요.';
       });
     }
   }
