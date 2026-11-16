@@ -3,19 +3,23 @@ import 'package:movielog/screen/home/home_screen.dart';
 import 'package:movielog/screen/main_screen.dart';
 import 'package:movielog/screen/movie/movie_detail_loader.dart';
 import 'package:movielog/screen/movie/movie_screen.dart';
+import 'package:movielog/screen/profile/edit_profile_screen.dart';
 import 'package:movielog/screen/profile/my_ratings_screen.dart';
 import 'package:movielog/screen/profile/profile_screen.dart';
 import 'package:movielog/screen/signup/signup_screen.dart';
 import 'package:movielog/screen/splash_screen.dart';
+import 'package:movielog/services/member_api_service.dart';
 import 'package:movielog/services/sign_up_service.dart';
 import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/view_models/auth_view_model.dart';
+import 'package:movielog/view_models/edit_profile_view_model.dart';
 import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
 import 'package:movielog/view_models/my_ratings_view_model.dart';
 import 'package:movielog/view_models/signup_view_model.dart';
+import 'package:movielog/widgets/movielog_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:movielog/models/tmdb_movie_dto.dart';
@@ -136,6 +140,28 @@ class AppRouter {
                     );
                   },
                 ),
+
+                GoRoute(
+                  path: 'profile/edit',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) {
+                    final auth = context.watch<AuthViewModel>();
+                    if (auth.member == null) {
+                      return Scaffold(
+                        appBar: AppBar(centerTitle: true, title: const Text('프로필 수정')),
+                        body: Center(
+                          child: auth.memberStatus == MemberLoadStatus.error
+                              ? MovieLogButton(label: '다시 시도', onPressed: () => auth.loadMember(force: true))
+                              : const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    return ChangeNotifierProvider<EditProfileViewModel>(
+                      create: (context) => EditProfileViewModel(context.read<MemberApiService>(), auth),
+                      child: const EditProfileScreen(),
+                    );
+                  },
+                )
               ]
             ),
           ],
