@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:movielog/models/create_member_request.dart';
+import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:movielog/view_models/signup_view_model.dart';
 import 'package:movielog/screen/signup/widgets/signup_field.dart';
 import 'package:movielog/screen/signup/widgets/signup_footer.dart';
@@ -38,27 +40,41 @@ class _SignupFormState extends State<SignupForm> {
       validatePassword(_passwordController.text) == null &&
       _agreed &&
       viewModel.nicknameCheckStatus == CheckStatus.available &&
-      viewModel.emailCheckStatus == CheckStatus.available;
+      viewModel.emailCheckStatus == CheckStatus.available &&
+      viewModel.submitStatus != SubmitStatus.submitting;
 
-  void _submit() {
-    final isValid = _formKey.currentState?.validate() ?? false;
+  Future<void> _submit() async {
     final viewModel = context.read<SignUpViewModel>();
 
-    if (!_canSubmit(viewModel)) {
-      return;
-    }
-
-    if (!isValid || !_agreed) {
-      return;
-    }
+    if (!_canSubmit(viewModel)) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
     FocusScope.of(context).unfocus();
-    context.go('/home');
+
+    await viewModel.submit(
+      CreateMemberRequest(
+        email: _emailController.text,
+        password: _passwordController.text,
+        nickname: _nicknameController.text,
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (viewModel.submitStatus == SubmitStatus.success && 
+        viewModel.createdMemberId != null) {
+      context.read<LearningMemberSession>().setMemberId(viewModel.createdMemberId!);
+      context.go('/movies');
+      return;
+    } else if (viewModel.snackbarMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(viewModel.snackbarMessage!)),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<SignUpViewModel>();
     return Form(
       key: _formKey,
       child: Column(
@@ -88,62 +104,70 @@ class _SignupFormState extends State<SignupForm> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: 16,
                   children: [
-                    SignupCheckField(
-                      label: '닉네임',
-                      hint: '닉네임을 입력해주세요',
-                      controller: _nicknameController,
-                      validator: validateNickname,
-                      showValidation: _nicknameEdited,
+                    Consumer<SignUpViewModel>(
+                      builder: (context, viewModel, child) => SignupCheckField(
+                        label: '닉네임',
+                        hint: '닉네임을 입력해주세요',
+                        controller: _nicknameController,
+                        validator: validateNickname,
+                        showValidation: _nicknameEdited,
 
-                      onFieldSubmitted: (_) => _emailFocusNode.requestFocus(),
-                      errorText: viewModel.nicknameErrorText,
-                      status: viewModel.nicknameCheckStatus,
-                      onChanged: (value) {
-                        setState(() => _nicknameEdited = true);
-                        viewModel.onNicknameChanged(value);
-                      },
-                      onCheck: viewModel.canCheckNickname
-                          ? () => viewModel.checkNickname(
-                              _nicknameController.text,
-                            )
-                          : null,
+                        onFieldSubmitted: (_) => _emailFocusNode.requestFocus(),
+                        errorText: viewModel.nicknameErrorText,
+                        status: viewModel.nicknameCheckStatus,
+                        onChanged: (value) {
+                          setState(() => _nicknameEdited = true);
+                          viewModel.onNicknameChanged(value);
+                        },
+                        onCheck: viewModel.canCheckNickname
+                            ? () => viewModel.checkNickname(
+                                _nicknameController.text,
+                              )
+                            : null,
+                      ),
                     ),
-                    SignupCheckField(
-                      label: '이메일',
-                      hint: '이메일을 입력해주세요',
-                      controller: _emailController,
-                      validator: validateEmail,
-                      showValidation: _emailEdited,
-                      focusNode: _emailFocusNode,
-                      onFieldSubmitted: (_) =>
-                          _passwordFocusNode.requestFocus(),
-                      errorText: viewModel.emailErrorText,
-                      status: viewModel.emailCheckStatus,
-                      onChanged: (value) {
-                        setState(() => _emailEdited = true);
-                        viewModel.onEmailChanged(value);
-                      },
-                      onCheck: viewModel.canCheckEmail
-                          ? () => viewModel.checkEmail(_emailController.text)
-                          : null,
+                    Consumer<SignUpViewModel>(
+                      builder: (context, viewModel, child) => SignupCheckField(
+                        label: '이메일',
+                        hint: '이메일을 입력해주세요',
+                        controller: _emailController,
+                        validator: validateEmail,
+                        showValidation: _emailEdited,
+                        focusNode: _emailFocusNode,
+                        onFieldSubmitted: (_) =>
+                            _passwordFocusNode.requestFocus(),
+                        errorText: viewModel.emailErrorText,
+                        status: viewModel.emailCheckStatus,
+                        onChanged: (value) {
+                          setState(() => _emailEdited = true);
+                          viewModel.onEmailChanged(value);
+                        },
+                        onCheck: viewModel.canCheckEmail
+                            ? () => viewModel.checkEmail(_emailController.text)
+                            : null,
+                      ),
                     ),
-                    SignupField(
-                      label: '비밀번호',
-                      hint: '비밀번호를 입력해주세요',
-                      controller: _passwordController,
-                      validator: validatePassword,
-                      showValidation: _passwordEdited,
-                      obscureText: true,
-                      focusNode: _passwordFocusNode,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) {
-                        _passwordFocusNode.unfocus();
-                      },
-                      onChanged: (_) {
-                        setState(() {
-                          _passwordEdited = true;
-                        });
-                      },
+                    Consumer<SignUpViewModel>(
+                      builder: (context, viewModel, child) => SignupField(
+                        label: '비밀번호',
+                        hint: '비밀번호를 입력해주세요',
+                        controller: _passwordController,
+                        validator: validatePassword,
+                        showValidation: _passwordEdited,
+                        obscureText: true,
+                        focusNode: _passwordFocusNode,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) {
+                          _passwordFocusNode.unfocus();
+                        },
+                        errorText: viewModel.passwordErrorText,
+                        onChanged: (_) {
+                          setState(() {
+                            _passwordEdited = true;
+                          });
+                          viewModel.onPasswordChanged();
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -152,14 +176,17 @@ class _SignupFormState extends State<SignupForm> {
           ),
 
           // 가입 조건 및 버튼
-          SignupFooter(
-            agreed: _agreed,
-            onAgreementChanged: (value) {
-              setState(() {
-                _agreed = value;
-              });
-            },
-            onSubmit: _canSubmit(viewModel) ? _submit : null,
+          Consumer<SignUpViewModel>(
+            builder: (context, viewModel, child) => SignupFooter(
+              agreed: _agreed,
+              onAgreementChanged: (value) {
+                setState(() {
+                  _agreed = value;
+                });
+              },
+              onSubmit: _canSubmit(viewModel) ? _submit : null,
+              isLoading: viewModel.submitStatus == SubmitStatus.submitting,
+            ),
           ),
         ],
       ),

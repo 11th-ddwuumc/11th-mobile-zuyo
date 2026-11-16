@@ -5,9 +5,16 @@ import 'package:movielog/theme/app_text_styles.dart';
 import 'package:movielog/widgets/tmdb_poster_image.dart';
 
 class MyRatingCard extends StatelessWidget {
-  const MyRatingCard({super.key, required this.entry});
+  const MyRatingCard({
+    super.key,
+    required this.entry,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   final RatingWithMovie entry;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +35,11 @@ class MyRatingCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: TmdbPosterImage(
               posterPath: movie?.posterPath,
-              width: 86,
-              height: 130,
+              width: 76,
+              height: 114,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 15),
@@ -52,21 +59,69 @@ class MyRatingCard extends StatelessWidget {
                       color: AppColors.primary500,
                     ),
                   ),
-                  if (rating.comment != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      rating.comment!,
-                      style: AppTextStyles.bodyMediumRegular.copyWith(
-                        fontSize: 13,
-                        color: const Color(0xFF655F6C),
-                      ),
+                  const SizedBox(height: 12),
+                  Text(
+                    rating.comment?.trim().isNotEmpty == true
+                        ? rating.comment!
+                        : movie == null
+                        ? '포스터 정보 없음'
+                        : '코멘트 없음',
+                    style: AppTextStyles.bodyMediumRegular.copyWith(
+                      fontSize: 13,
+                      color: const Color(0xFF655F6C),
                     ),
-                  ],
+                  ),
                 ],
               ),
             ),
           ),
+          const SizedBox(width: 12),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Column(
+              children: [
+                _actionButton(
+                  '수정',
+                  onEdit,
+                  AppColors.primary500,
+                  const Color(0xFFF0EAF8),
+                ),
+                const SizedBox(height: 8),
+                _actionButton(
+                  '삭제',
+                  onDelete,
+                  AppColors.error,
+                  const Color(0xFFFFF2F1),
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _actionButton(
+    String label,
+    VoidCallback onPressed,
+    Color foreground,
+    Color background,
+  ) {
+    return SizedBox(
+      width: 58,
+      height: 34,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          foregroundColor: foreground,
+          backgroundColor: background,
+          padding: EdgeInsets.zero,
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+          textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+        ),
+        child: Text(label),
       ),
     );
   }

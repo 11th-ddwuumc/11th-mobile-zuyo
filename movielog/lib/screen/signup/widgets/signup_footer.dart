@@ -9,11 +9,13 @@ class SignupFooter extends StatelessWidget {
     required this.agreed,
     required this.onAgreementChanged,
     required this.onSubmit,
+    this.isLoading = false,
   });
 
   final bool agreed;
   final ValueChanged<bool> onAgreementChanged;
   final VoidCallback? onSubmit;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +55,7 @@ class SignupFooter extends StatelessWidget {
               width: double.infinity,
               disabledBackgroundColor: const Color(0xFFD3C6E2),
               onPressed: onSubmit,
+              isLoading: isLoading,
             ),
           ),
 

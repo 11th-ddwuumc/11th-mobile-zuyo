@@ -9,6 +9,9 @@ class MovieLogButton extends StatelessWidget {
     this.isLoading = false,
     this.width,
     this.disabledBackgroundColor = AppColors.buttonLoading,
+    this.backgroundColor = AppColors.primary500,
+    this.foregroundColor = AppColors.lowest,
+    this.borderRadius = 12,
   });
 
   final String label;
@@ -16,6 +19,9 @@ class MovieLogButton extends StatelessWidget {
   final bool isLoading;
   final double? width;
   final Color disabledBackgroundColor;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final double borderRadius;
 
   bool get _disabled => isLoading || onPressed == null;
 
@@ -27,12 +33,12 @@ class MovieLogButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: _disabled ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary500,
+          backgroundColor: backgroundColor,
           disabledBackgroundColor: disabledBackgroundColor,
-          foregroundColor: AppColors.lowest,
+          foregroundColor: foregroundColor,
           disabledForegroundColor: AppColors.lowest,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
         ),
         child: isLoading

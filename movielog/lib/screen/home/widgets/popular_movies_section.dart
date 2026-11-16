@@ -78,10 +78,7 @@ class PopularMoviesSection extends StatelessWidget {
                   rank: index + 1,
                   onTap: () => context.push(
                     '/movies/${movie.id}',
-                    extra: (
-                      movie: movie,
-                      genreNames: genreNamesFor(movie),
-                    ),
+                    extra: movie
                   ),
                 );
               },

@@ -83,10 +83,7 @@ class HomeScreen extends StatelessWidget {
                           movie: movies.first,
                           onTap: () => context.push(
                             '/movies/${movies.first.id}',
-                            extra: (
-                              movie: movies.first,
-                              genreNames: viewModel.genreNamesFor(movies.first),
-                            ),
+                            extra: movies.first,
                           ),
                         ),
                       ),
