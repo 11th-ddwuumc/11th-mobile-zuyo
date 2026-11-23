@@ -21,9 +21,7 @@ class MemberInfo {
   );
   
   factory MemberInfo.fromJson(Map<String, dynamic> json) {
-    final memberId = json['memberId'];
     return MemberInfo(
-      memberId: memberId is int && memberId > 0 ? memberId : null,
       email: json['email'] as String,
       nickname: json['nickname'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),

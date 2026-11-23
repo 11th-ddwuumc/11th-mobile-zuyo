@@ -34,7 +34,6 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<MemberInfo> _fetchMember() async {
     final me = await _memberApi.fetchMe();
-    if (me.memberId != null) return me;
     try {
       return me.withMemberId(await _memberIds.read(me.email));
     } catch (_) {
@@ -171,8 +170,7 @@ class AuthViewModel extends ChangeNotifier {
     if (_disposed || status != AuthStatus.signedIn) return;
     final previous = member;
     member = updated.withMemberId(
-      updated.memberId ??
-          (previous?.email == updated.email ? previous?.memberId : null),
+      previous?.email == updated.email ? previous?.memberId : null,
     );
     notifyListeners();
   }
