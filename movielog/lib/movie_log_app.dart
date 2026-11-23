@@ -9,6 +9,7 @@ import 'package:movielog/core/storage/member_id_storage.dart';
 import 'package:movielog/core/storage/token_storage.dart';
 import 'package:movielog/router/app_router.dart';
 import 'package:movielog/services/auth_api_service.dart';
+import 'package:movielog/services/favorite_api_service.dart';
 import 'package:movielog/services/member_api_service.dart';
 import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/sign_up_service.dart';
@@ -76,6 +77,9 @@ class MovieLogApp extends StatelessWidget {
         ),
         Provider<SessionGuard>(
           create: (context) => context.read<AuthSessionBridge>().guard,
+        ),
+        Provider<FavoriteApiService>(
+          create: (_) => FavoriteApiService(authClient),
         ),
       ],
       child: const _MovieLogRouterApp(), // 뒤 절의 Stateful Router 호스트를 사용합니다.
