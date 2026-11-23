@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:movielog/models/tmdb_movie_dto.dart';
 import 'package:movielog/theme/app_colors.dart';
 import 'package:movielog/theme/app_text_styles.dart';
+import 'package:movielog/widgets/favorite_button.dart';
 
 class MovieDetailInfo extends StatelessWidget{
   const MovieDetailInfo({
@@ -29,11 +30,18 @@ class MovieDetailInfo extends StatelessWidget{
         spacing: 4,
         children: [
           // 제목
-          Text(
-            movie.title,
-            style: AppTextStyles.titleLargeMedium.copyWith(
-              color: AppColors.neutral900,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  movie.title,
+                  style: AppTextStyles.titleLargeMedium.copyWith(
+                    color: AppColors.neutral900,
+                  ),
+                ),
+              ),
+              const FavoriteButton(),
+            ],
           ),
 
           // 정보

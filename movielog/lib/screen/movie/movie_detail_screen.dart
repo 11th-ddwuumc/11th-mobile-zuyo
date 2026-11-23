@@ -29,9 +29,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
     _genresFuture = context.read<TmdbMovieService>().fetchGenres();
   }
 
-  double? myRating;
-  bool isBookmark = false;
-
   Future<void> _openRatingDialog() async {
     final viewModel = context.read<MovieDetailViewModel>();
     final currentRating = viewModel.rating;
@@ -101,23 +98,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
       ),
     );
   }
-
-  void _toggleBookmark() {
-    setState(() {
-      isBookmark = !isBookmark;
-    });
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(
-            isBookmark ? '즐겨찾기에 추가했어요.' : '즐겨찾기에서 해제했어요.',
-          ),
-        ),
-      );
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +204,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen>{
                 padding: EdgeInsets.all(16),
                 child: MovieDetailActions(
                   onRate: _openRatingDialog,
-                  onBookmark: _toggleBookmark,
                 ),
               ),
             ),

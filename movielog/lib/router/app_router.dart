@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:movielog/core/session/session_guard.dart';
 import 'package:movielog/core/storage/member_id_storage.dart';
 import 'package:movielog/screen/home/home_screen.dart';
 import 'package:movielog/screen/login/login_screen.dart';
@@ -11,11 +12,13 @@ import 'package:movielog/screen/profile/profile_screen.dart';
 import 'package:movielog/screen/signup/signup_screen.dart';
 import 'package:movielog/screen/splash_screen.dart';
 import 'package:movielog/services/member_api_service.dart';
+import 'package:movielog/services/favorite_api_service.dart';
 import 'package:movielog/services/sign_up_service.dart';
 import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/view_models/auth_view_model.dart';
 import 'package:movielog/view_models/edit_profile_view_model.dart';
+import 'package:movielog/view_models/favorite_detail_view_model.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
 import 'package:movielog/view_models/my_ratings_view_model.dart';
@@ -106,11 +109,40 @@ class AppRouter {
                     }
 
                     final extra = state.extra;
+                    final auth = context.watch<AuthViewModel>();
+                    final email = auth.member?.email;
+                    final guard = context.read<SessionGuard>();
 
-                    return MovieDetailLoader(
-                      movieId: id,
-                      initialMovie:
-                          extra is TmdbMovieDto && extra.id == id ? extra : null,
+                    if (auth.status != AuthStatus.signedIn ||
+                        email == null || guard.accountId != email) {
+                      return Scaffold(
+                        appBar: AppBar(title: const Text('영화 상세')),
+                        body: Center(
+                          child: auth.memberStatus == MemberLoadStatus.error
+                              ? MovieLogButton(
+                                  label: '내 정보 다시 불러오기',
+                                  onPressed: () => auth.loadMember(force: true),
+                                )
+                              : const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    return ChangeNotifierProvider<FavoriteDetailViewModel>(
+                      key: ValueKey((id, email, guard.generation)),
+                      create: (context) => FavoriteDetailViewModel(
+                        movieId: id,
+                        favoriteApi: context.read<FavoriteApiService>(),
+                        sessionGuard: guard,
+                        accountId: email,
+                        expireSession: auth.expireSession,
+                      )..load(),
+                      child: MovieDetailLoader(
+                        movieId: id,
+                        initialMovie: extra is TmdbMovieDto && extra.id == id
+                            ? extra
+                            : null,
+                      ),
                     );
                   },
                 ),
