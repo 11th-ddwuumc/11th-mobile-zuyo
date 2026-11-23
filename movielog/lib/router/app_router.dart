@@ -246,6 +246,7 @@ class AppRouter {
                         tmdbApi: context.read<TmdbMovieService>(),
                         sessionGuard: guard,
                         accountId: email,
+                        expireSession: auth.expireSession,
                       ),
                       child: FavoritesScreen(
                         onOpenMovie: (movie) async {

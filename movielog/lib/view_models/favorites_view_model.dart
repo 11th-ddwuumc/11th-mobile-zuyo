@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:movielog/core/network/api_error.dart';
 import 'package:movielog/core/session/session_guard.dart';
 import 'package:movielog/core/utils/map_bounded.dart';
 import 'package:movielog/core/utils/safe_notify.dart';
@@ -14,6 +16,7 @@ class FavoritesViewModel extends ChangeNotifier with SafeNotify {
     required this.tmdbApi,
     required this.sessionGuard,
     required this.accountId,
+    required this.expireSession,
     this.enrichmentConcurrency = 5,
   });
 
@@ -21,6 +24,7 @@ class FavoritesViewModel extends ChangeNotifier with SafeNotify {
   final TmdbMovieService tmdbApi;
   final SessionGuard sessionGuard;
   final String accountId;
+  final Future<void> Function() expireSession;
   final int enrichmentConcurrency;
 
   LoadPhase phase = LoadPhase.idle;
@@ -83,8 +87,15 @@ class FavoritesViewModel extends ChangeNotifier with SafeNotify {
       if (!_isCurrent(refreshGeneration)) return;
       items = enriched;
       phase = items.isEmpty ? LoadPhase.empty : LoadPhase.ready;
-    } catch (_) {
+    } catch (error) {
       if (!_isCurrent(refreshGeneration)) return;
+      if (error is DioException && error.response?.statusCode == 401) {
+        final code = apiErrorCode(error);
+        if (code == 'AUTH401_2' || code == 'AUTH401_3' || code == 'AUTH401_4') {
+          await expireSession();
+          return;
+        }
+      }
       phase = LoadPhase.error;
       errorMessage = '내 즐겨찾기 목록을 불러오지 못했습니다.';
     } finally {
