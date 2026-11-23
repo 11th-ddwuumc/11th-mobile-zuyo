@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movielog/models/create_member_request.dart';
-import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:movielog/view_models/signup_view_model.dart';
 import 'package:movielog/screen/signup/widgets/signup_field.dart';
 import 'package:movielog/screen/signup/widgets/signup_footer.dart';
@@ -61,9 +60,7 @@ class _SignupFormState extends State<SignupForm> {
 
     if (!mounted) return;
 
-    if (viewModel.submitStatus == SubmitStatus.success && 
-        viewModel.createdMemberId != null) {
-      context.read<LearningMemberSession>().setMemberId(viewModel.createdMemberId!);
+    if (viewModel.submitStatus == SubmitStatus.success) {
       context.go('/movies');
       return;
     } else if (viewModel.snackbarMessage != null) {

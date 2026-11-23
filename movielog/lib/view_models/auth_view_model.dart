@@ -97,11 +97,11 @@ class AuthViewModel extends ChangeNotifier {
 
     try {
       final me = await _memberApi.fetchMe();
-      if (version != _sessionVersion) return; // 로그아웃·계정 전환 뒤 늦게 온 응답 무시
+      if (!_isCurrent(version)) return; // 로그아웃·계정 전환 뒤 늦게 온 응답 무시
       member = me;
       memberStatus = MemberLoadStatus.success;
     } on DioException catch (error) {
-      if (version != _sessionVersion) return;
+      if (!_isCurrent(version)) return;
       final code = apiErrorCode(error);
       if (code == 'AUTH401_2' || code == 'AUTH401_3' || code == 'AUTH401_4') {
         await _clearCurrentSession(); // 세션 만료: signedOut이 되어 Router가 /login으로 이동
@@ -109,8 +109,12 @@ class AuthViewModel extends ChangeNotifier {
       }
       memberStatus = MemberLoadStatus.error; // 네트워크 실패: 로그아웃하지 않고 재시도 가능
       message = '내 정보를 불러오지 못했어요.';
+    } catch (_) {
+      if (!_isCurrent(version)) return;
+      memberStatus = MemberLoadStatus.error;
+      message = '내 정보를 불러오지 못했어요.';
     }
-    notifyListeners();
+    _notify();
   }
 
   Future<void> restoreSession() async {
@@ -152,7 +156,14 @@ class AuthViewModel extends ChangeNotifier {
 
   void updateMember(MemberInfo updated) {
     if (_disposed || status != AuthStatus.signedIn) return;
-    member = updated;
+    final previous = member;
+    member = MemberInfo(
+      email: updated.email,
+      nickname: updated.nickname,
+      createdAt: updated.createdAt,
+      memberId: updated.memberId ??
+          (previous?.email == updated.email ? previous?.memberId : null),
+    );
     notifyListeners();
   }
 

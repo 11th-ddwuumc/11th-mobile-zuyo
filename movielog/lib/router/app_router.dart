@@ -15,7 +15,6 @@ import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/view_models/auth_view_model.dart';
 import 'package:movielog/view_models/edit_profile_view_model.dart';
-import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
 import 'package:movielog/view_models/my_ratings_view_model.dart';
@@ -124,19 +123,36 @@ class AppRouter {
                   path: 'ratings', // 최종 경로: /my/ratings
                   parentNavigatorKey: AppRouter.rootNavigatorKey, // root Navigator 위에 표시해 하단 NavigationBar를 가립니다.
                   builder: (context, state) {
-                    final id = context.read<LearningMemberSession>().memberId;
+                    final auth = context.watch<AuthViewModel>();
+                    final id = auth.member?.memberId;
                     if (id == null) {
+                      final loading = auth.memberStatus == MemberLoadStatus.idle ||
+                          auth.memberStatus == MemberLoadStatus.loading;
                       return Scaffold(
                         appBar: AppBar(centerTitle: true, title: const Text('내가 등록한 평점')),
-                        body: const Center(child: Text('학습용 회원가입이 필요합니다.')),
+                        body: Center(
+                          child: loading
+                              ? const CircularProgressIndicator()
+                              : Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text('회원 ID를 확인하지 못했어요.'),
+                                    MovieLogButton(
+                                      label: '다시 시도',
+                                      onPressed: () => auth.loadMember(force: true),
+                                    ),
+                                  ],
+                                ),
+                        ),
                       );
                     }
                     return ChangeNotifierProvider<MyRatingsViewModel>(
+                      key: ValueKey((auth.sessionVersion, id)),
                       create: (context) => MyRatingsViewModel(
                         context.read<RatingApiService>(),
                         context.read<TmdbMovieService>(),
                         id,
-                        context.read<AuthViewModel>(),
+                        auth,
                       )..load(),
                       child: const MyRatingsScreen(),
                     );

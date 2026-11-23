@@ -12,7 +12,6 @@ import 'package:movielog/services/sign_up_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/theme/app_theme.dart';
 import 'package:movielog/view_models/auth_view_model.dart';
-import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:provider/provider.dart';
 
 class MovieLogApp extends StatelessWidget {
@@ -46,9 +45,6 @@ class MovieLogApp extends StatelessWidget {
         ),
         Provider<SignUpService>(
           create: (_) => SignUpService(publicClient),
-        ),
-        ChangeNotifierProvider<LearningMemberSession>(
-          create: (_) => LearningMemberSession(),
         ),
         // Service를 주입받는 ViewModel
         ChangeNotifierProvider<AuthViewModel>(

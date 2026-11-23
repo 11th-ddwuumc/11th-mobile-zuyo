@@ -5,14 +5,18 @@ class MemberInfo {
     required this.email,
     required this.nickname,
     required this.createdAt,
+    this.memberId,
   });
 
   final String email;
   final String nickname;
   final DateTime createdAt;
+  final int? memberId;
   
   factory MemberInfo.fromJson(Map<String, dynamic> json) {
+    final memberId = json['memberId'];
     return MemberInfo(
+      memberId: memberId is int && memberId > 0 ? memberId : null,
       email: json['email'] as String,
       nickname: json['nickname'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
