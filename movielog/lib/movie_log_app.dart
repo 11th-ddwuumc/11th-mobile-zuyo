@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movielog/core/network/movie_log_client.dart';
 import 'package:movielog/core/network/tmdb_client.dart';
+import 'package:movielog/core/storage/member_id_storage.dart';
 import 'package:movielog/core/storage/token_storage.dart';
 import 'package:movielog/router/app_router.dart';
 import 'package:movielog/services/auth_api_service.dart';
@@ -26,6 +27,9 @@ class MovieLogApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<TokenStorage>.value(value: tokenStorage),
+        Provider<MemberIdStorage>.value(
+          value: const MemberIdStorage(FlutterSecureStorage()),
+        ),
         Provider<TmdbMovieService>(
           create: (_) => TmdbMovieService(createTmdbClient()),
         ),
@@ -52,6 +56,7 @@ class MovieLogApp extends StatelessWidget {
             context.read<AuthApiService>(),
             context.read<MemberApiService>(),
             context.read<TokenStorage>(),
+            context.read<MemberIdStorage>(),
           ),
         ),
       ],

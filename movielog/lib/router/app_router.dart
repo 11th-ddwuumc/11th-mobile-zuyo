@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:movielog/core/storage/member_id_storage.dart';
 import 'package:movielog/screen/home/home_screen.dart';
 import 'package:movielog/screen/login/login_screen.dart';
 import 'package:movielog/screen/main_screen.dart';
@@ -59,6 +60,7 @@ class AppRouter {
           builder: (context, state) => ChangeNotifierProvider<SignUpViewModel>(
             create: (context) => SignUpViewModel(
               context.read<SignUpService>(),
+              context.read<MemberIdStorage>(),
             ),
             child: const SignupScreen(),
           ),
@@ -136,7 +138,11 @@ class AppRouter {
                               : Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text('회원 ID를 확인하지 못했어요.'),
+                                    Text(
+                                      auth.memberStatus == MemberLoadStatus.error
+                                          ? '내 정보를 불러오지 못했어요.'
+                                          : '이 기기에 저장된 회원 ID를 찾지 못했어요.',
+                                    ),
                                     MovieLogButton(
                                       label: '다시 시도',
                                       onPressed: () => auth.loadMember(force: true),

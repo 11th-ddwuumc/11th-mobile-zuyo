@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:movielog/core/network/api_error.dart';
+import 'package:movielog/core/storage/member_id_storage.dart';
 import 'package:movielog/core/storage/token_storage.dart';
 import 'package:movielog/models/login_models.dart';
 import 'package:movielog/models/member_info.dart';
@@ -11,10 +12,11 @@ enum AuthStatus { initializing, signedOut, authenticating, signedIn, retryRequir
 enum MemberLoadStatus { idle, loading, success, error }
 
 class AuthViewModel extends ChangeNotifier {
-  AuthViewModel(this._authApi, this._memberApi, this._storage);
+  AuthViewModel(this._authApi, this._memberApi, this._storage, this._memberIds);
   final AuthApiService _authApi;
   final MemberApiService _memberApi;
   final TokenStorage _storage;
+  final MemberIdStorage _memberIds;
 
   AuthStatus status = AuthStatus.initializing;
   MemberInfo? member;
@@ -29,6 +31,17 @@ class AuthViewModel extends ChangeNotifier {
 
   bool _isCurrent(int version) => !_disposed && version == _sessionVersion;
   void _notify() { if (!_disposed) notifyListeners(); }
+
+  Future<MemberInfo> _fetchMember() async {
+    final me = await _memberApi.fetchMe();
+    if (me.memberId != null) return me;
+    try {
+      return me.withMemberId(await _memberIds.read(me.email));
+    } catch (_) {
+      // Secure storage failure must not prevent an authenticated session.
+      return me;
+    }
+  }
 
   Future<void> login(String email, String password) async {
     if (_disposed || storageCleanupInProgress || status == AuthStatus.authenticating) return;
@@ -96,7 +109,7 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final me = await _memberApi.fetchMe();
+      final me = await _fetchMember();
       if (!_isCurrent(version)) return; // 로그아웃·계정 전환 뒤 늦게 온 응답 무시
       member = me;
       memberStatus = MemberLoadStatus.success;
@@ -131,7 +144,7 @@ class AuthViewModel extends ChangeNotifier {
       if (token == null || token.isEmpty) {
         status = AuthStatus.signedOut;
       } else {
-        final verifiedMember = await _memberApi.fetchMe();
+        final verifiedMember = await _fetchMember();
         if (!_isCurrent(version)) return;
         member = verifiedMember;
         memberStatus = MemberLoadStatus.success;
@@ -157,11 +170,8 @@ class AuthViewModel extends ChangeNotifier {
   void updateMember(MemberInfo updated) {
     if (_disposed || status != AuthStatus.signedIn) return;
     final previous = member;
-    member = MemberInfo(
-      email: updated.email,
-      nickname: updated.nickname,
-      createdAt: updated.createdAt,
-      memberId: updated.memberId ??
+    member = updated.withMemberId(
+      updated.memberId ??
           (previous?.email == updated.email ? previous?.memberId : null),
     );
     notifyListeners();

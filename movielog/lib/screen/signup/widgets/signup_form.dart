@@ -60,13 +60,13 @@ class _SignupFormState extends State<SignupForm> {
 
     if (!mounted) return;
 
-    if (viewModel.submitStatus == SubmitStatus.success) {
-      context.go('/movies');
-      return;
-    } else if (viewModel.snackbarMessage != null) {
+    if (viewModel.snackbarMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(viewModel.snackbarMessage!)),
       );
+    }
+    if (viewModel.submitStatus == SubmitStatus.success) {
+      context.go('/login');
     }
   }
 
