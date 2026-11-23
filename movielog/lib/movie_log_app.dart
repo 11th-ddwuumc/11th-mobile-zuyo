@@ -3,16 +3,19 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movielog/core/network/movie_log_client.dart';
 import 'package:movielog/core/network/tmdb_client.dart';
+import 'package:movielog/core/session/auth_session_bridge.dart';
+import 'package:movielog/core/session/session_guard.dart';
+import 'package:movielog/core/storage/member_id_storage.dart';
 import 'package:movielog/core/storage/token_storage.dart';
 import 'package:movielog/router/app_router.dart';
 import 'package:movielog/services/auth_api_service.dart';
+import 'package:movielog/services/favorite_api_service.dart';
 import 'package:movielog/services/member_api_service.dart';
 import 'package:movielog/services/rating_api_service.dart';
 import 'package:movielog/services/sign_up_service.dart';
 import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/theme/app_theme.dart';
 import 'package:movielog/view_models/auth_view_model.dart';
-import 'package:movielog/view_models/learning_member_session.dart';
 import 'package:provider/provider.dart';
 
 class MovieLogApp extends StatelessWidget {
@@ -27,6 +30,9 @@ class MovieLogApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<TokenStorage>.value(value: tokenStorage),
+        Provider<MemberIdStorage>.value(
+          value: const MemberIdStorage(FlutterSecureStorage()),
+        ),
         Provider<TmdbMovieService>(
           create: (_) => TmdbMovieService(createTmdbClient()),
         ),
@@ -47,16 +53,33 @@ class MovieLogApp extends StatelessWidget {
         Provider<SignUpService>(
           create: (_) => SignUpService(publicClient),
         ),
-        ChangeNotifierProvider<LearningMemberSession>(
-          create: (_) => LearningMemberSession(),
-        ),
         // Service를 주입받는 ViewModel
         ChangeNotifierProvider<AuthViewModel>(
           create: (context) => AuthViewModel(
             context.read<AuthApiService>(),
             context.read<MemberApiService>(),
             context.read<TokenStorage>(),
+            context.read<MemberIdStorage>(),
           ),
+        ),
+        Provider<AuthSessionBridge>(
+          create: (context) {
+            final auth = context.read<AuthViewModel>();
+            return AuthSessionBridge(
+              authSignals: auth,
+              sessionVersion: () => auth.sessionVersion,
+              verifiedEmail: () => auth.status == AuthStatus.signedIn
+                  ? auth.member?.email
+                  : null,
+            );
+          },
+          dispose: (_, bridge) => bridge.dispose(),
+        ),
+        Provider<SessionGuard>(
+          create: (context) => context.read<AuthSessionBridge>().guard,
+        ),
+        Provider<FavoriteApiService>(
+          create: (_) => FavoriteApiService(authClient),
         ),
       ],
       child: const _MovieLogRouterApp(), // 뒤 절의 Stateful Router 호스트를 사용합니다.

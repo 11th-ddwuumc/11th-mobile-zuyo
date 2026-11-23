@@ -6,22 +6,50 @@ import 'package:movielog/widgets/tmdb_poster_image.dart';
 
 class MovieCard extends StatelessWidget {
   const MovieCard({
-    super.key, 
-    required this.movie, 
+    super.key,
+    required TmdbMovieDto this.movie,
     required this.genreNames,
-    required this.onTap
-  });
+    required this.onTap,
+  }) : _horizontalCaption = null,
+       isRetrying = false,
+       onRetry = null;
 
-  final TmdbMovieDto movie;
-  final VoidCallback onTap;
+  const MovieCard.horizontal({
+    super.key,
+    required this.movie,
+    required String caption,
+    required this.onTap,
+    this.onRetry,
+    this.isRetrying = false,
+  }) : genreNames = const [],
+       _horizontalCaption = caption;
+
+  final TmdbMovieDto? movie;
+  final VoidCallback? onTap;
   final List<String> genreNames;
+
+  final String? _horizontalCaption;
+  final bool isRetrying;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
+    final caption = _horizontalCaption;
+    if (caption != null) {
+      return _HorizontalMovieCard(
+        movie: this.movie,
+        caption: caption,
+        onOpen: onTap,
+        onRetry: onRetry,
+        isRetrying: isRetrying,
+      );
+    }
+
+    final movie = this.movie!;
     final releaseDate = movie.releaseDate;
     final year = releaseDate != null && releaseDate.length >= 4
-      ? releaseDate.substring(0, 4)
-      : '개봉일 미정';
+        ? releaseDate.substring(0, 4)
+        : '개봉일 미정';
 
     return GestureDetector(
       onTap: onTap,
@@ -37,12 +65,14 @@ class MovieCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: LayoutBuilder(
-                    builder: (context, constraints){
+                    builder: (context, constraints) {
                       return TmdbPosterImage(
-                        posterPath: movie.posterPath, width: constraints.maxWidth, height: constraints.maxHeight
+                        posterPath: movie.posterPath,
+                        width: constraints.maxWidth,
+                        height: constraints.maxHeight,
                       );
-                    }
-                  )
+                    },
+                  ),
                 ),
 
                 Positioned(
@@ -115,6 +145,94 @@ class MovieCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HorizontalMovieCard extends StatelessWidget {
+  const _HorizontalMovieCard({
+    required this.movie,
+    required this.caption,
+    required this.isRetrying,
+    required this.onRetry,
+    required this.onOpen,
+  });
+
+  final TmdbMovieDto? movie;
+  final String caption;
+  final bool isRetrying;
+  final VoidCallback? onRetry;
+  final VoidCallback? onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(14);
+    final posterPath = movie?.posterPath;
+    return Material(
+      color: AppColors.base,
+      shape: RoundedRectangleBorder(
+        borderRadius: radius,
+        side: const BorderSide(color: AppColors.secondary300),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onOpen,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: posterPath == null || posterPath.isEmpty
+                    ? const SizedBox(
+                        width: 80,
+                        height: 120,
+                        child: ColoredBox(color: AppColors.secondary200),
+                      )
+                    : TmdbPosterImage(
+                        posterPath: posterPath,
+                        width: 80,
+                        height: 120,
+                      ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        movie?.title ?? '영화 정보를 불러오지 못했어요.',
+                        style: AppTextStyles.bodyLargeBold,
+                      ),
+                      if (caption.isNotEmpty) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          caption,
+                          style: AppTextStyles.labelLargeBold.copyWith(
+                            color: AppColors.primary500,
+                          ),
+                        ),
+                      ],
+                      if (movie == null)
+                        TextButton(
+                          onPressed: isRetrying ? null : onRetry,
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            alignment: Alignment.centerLeft,
+                          ),
+                          child: Text(isRetrying ? '불러오는 중…' : '정보 다시 불러오기'),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

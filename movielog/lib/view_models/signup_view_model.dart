@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:movielog/core/storage/member_id_storage.dart';
 import 'package:movielog/models/create_member_request.dart';
 import 'package:movielog/services/sign_up_service.dart';
 
@@ -7,11 +8,11 @@ enum CheckStatus { idle, checking, available, duplicated, error }
 enum SubmitStatus { idle, submitting, success, error }
 
 class SignUpViewModel extends ChangeNotifier {
-  SignUpViewModel(this._service);
+  SignUpViewModel(this._service, this._memberIds);
+  final MemberIdStorage _memberIds;
   final SignUpService _service;
 
   SubmitStatus submitStatus = SubmitStatus.idle;
-  int? createdMemberId; // 가입 성공 응답에서 읽은 실제 ID입니다.
   String? passwordErrorText;
   String? snackbarMessage;
 
@@ -162,22 +163,24 @@ class SignUpViewModel extends ChangeNotifier {
     if (_disposed || submitStatus == SubmitStatus.submitting) return;
 
     submitStatus = SubmitStatus.submitting;
-    createdMemberId = null;
     passwordErrorText = null;
     snackbarMessage = null;
     notifyListeners();
 
     try {
       final response = await _service.signUp(request);
-      if (_disposed) return;
+      final member = response.result;
 
-      final id = response.result?.memberId;
-
-      if (!response.isSuccess || id == null) {
+      if (!response.isSuccess || member == null || member.memberId <= 0) {
         throw StateError('회원가입 성공 결과를 확인할 수 없습니다.');
       }
 
-      createdMemberId = id;
+      try {
+        await _memberIds.save(member.email, member.memberId);
+      } catch (_) {
+        snackbarMessage = '가입은 완료됐지만 이 기기에 회원 ID를 저장하지 못했어요.';
+      }
+      if (_disposed) return;
       submitStatus = SubmitStatus.success;
     } on DioException catch (error) {
       if (_disposed) return;
@@ -209,7 +212,6 @@ class SignUpViewModel extends ChangeNotifier {
   }
   void _resetSubmitState() {
     submitStatus = SubmitStatus.idle;
-    createdMemberId = null;
     passwordErrorText = null;
     snackbarMessage = null;
   }
