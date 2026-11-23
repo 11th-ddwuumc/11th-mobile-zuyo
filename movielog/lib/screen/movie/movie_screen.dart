@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:movielog/view_models/movie_list_view_model.dart';
+import 'package:movielog/view_models/load_phase.dart';
+import 'package:movielog/view_models/page_movies_view_model.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
+import 'package:movielog/widgets/movie_page_footer.dart';
 import 'package:movielog/screen/movie/widgets/movie_genre_filter.dart';
 import 'package:movielog/screen/movie/widgets/movie_grid.dart';
 import 'package:movielog/screen/movie/states/movie_list_empty.dart';
@@ -42,48 +44,50 @@ class MovieScreen extends StatelessWidget {
           child: Column(
             children: [
               // 장르 필터
-              Consumer<MovieListViewModel>(
-                builder: (context, viewModel, child){
+              Consumer<PagedMoviesViewModel>(
+                builder: (context, viewModel, child) {
                   return MovieGenreFilter(
                     genres: viewModel.genres,
                     selectedGenre: viewModel.selectedGenreId,
-                    isLoading: viewModel.status == MovieListLoadStatus.loading,
-                    onSelected: (genreId) => viewModel.selectGenre(genreId),
+                    isLoading:
+                        viewModel.phase == LoadPhase.loading &&
+                        viewModel.genres.isEmpty,
+                    onSelected: (genreId) {
+                      if (genreId != viewModel.selectedGenreId) {
+                        viewModel.loadInitial(genreId: genreId);
+                      }
+                    },
                   );
-                }
+                },
               ),
-              
+
               const SizedBox(height: 16),
-              // 영화 목록 그리드 
+              // 영화 목록 그리드
               Expanded(
-                child: Consumer<MovieListViewModel>(
+                child: Consumer<PagedMoviesViewModel>(
                   builder: (context, viewModel, child) {
-                    return switch (viewModel.status) {
-                      
-                      MovieListLoadStatus.idle ||
-                      MovieListLoadStatus.loading => const MovieListLoading(),
-                    
-                      MovieListLoadStatus.error => MovieListError(
-                        onRetry: () {
-                          if (viewModel.selectedGenreId == null) {
-                            viewModel.loadInitial();
-                          } else {
-                            viewModel.selectGenre(viewModel.selectedGenreId);
-                          }
-                        },
+                    return switch (viewModel.phase) {
+                      LoadPhase.idle ||
+                      LoadPhase.loading => const MovieListLoading(),
+
+                      LoadPhase.error => MovieListError(
+                        onRetry: () => viewModel.loadInitial(
+                          genreId: viewModel.selectedGenreId,
+                        ),
                       ),
 
-                      MovieListLoadStatus.empty => const MovieListEmpty(),
-                    
-                      MovieListLoadStatus.success => MovieGrid(
+                      LoadPhase.empty => const MovieListEmpty(),
+
+                      LoadPhase.ready => MovieGrid(
+                        key: ValueKey(viewModel.selectedGenreId),
                         movies: viewModel.movies,
                         genreNamesFor: viewModel.genreNamesFor,
+                        footer: MoviePageFooter(vm: viewModel),
                       ),
-                      
                     };
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),

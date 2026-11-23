@@ -8,10 +8,12 @@ class MovieGrid extends StatelessWidget {
     super.key,
     required this.movies,
     required this.genreNamesFor,
+    this.footer,
   });
 
   final List<TmdbMovieDto> movies;
   final List<String> Function(TmdbMovieDto) genreNamesFor;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -24,29 +26,33 @@ class MovieGrid extends StatelessWidget {
         const infoHeight = 8.0 + 24.0 + 24.0;
         final cardHeight = posterHeight + 4.0 + infoHeight;
 
-        return GridView.builder(
-          padding: const EdgeInsets.only(bottom: 16),
-          itemCount: movies.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: columnSpacing,
-            mainAxisSpacing: 24,
-            mainAxisExtent: cardHeight,
-          ),
-          
-          itemBuilder: (context, index) {
-            final movie = movies[index];
+        return CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.only(bottom: 16),
+              sliver: SliverGrid.builder(
+                itemCount: movies.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: columnSpacing,
+                  mainAxisSpacing: 24,
+                  mainAxisExtent: cardHeight,
+                ),
 
-            return MovieCard(
-              movie: movie,
-              genreNames: genreNamesFor(movie),
-              onTap: () => context.push(
-                '/movies/${movie.id}', 
-                extra: movie
+                itemBuilder: (context, index) {
+                  final movie = movies[index];
+
+                  return MovieCard(
+                    movie: movie,
+                    genreNames: genreNamesFor(movie),
+                    onTap: () =>
+                        context.push('/movies/${movie.id}', extra: movie),
+                  );
+                },
               ),
-            );
-          },
-          
+            ),
+            if (footer != null) SliverToBoxAdapter(child: footer),
+          ],
         );
       },
     );
