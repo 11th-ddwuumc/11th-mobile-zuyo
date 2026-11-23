@@ -6,6 +6,7 @@ import 'package:movielog/screen/login/login_screen.dart';
 import 'package:movielog/screen/main_screen.dart';
 import 'package:movielog/screen/movie/movie_detail_loader.dart';
 import 'package:movielog/screen/movie/movie_screen.dart';
+import 'package:movielog/screen/movie/movie_search_screen.dart';
 import 'package:movielog/screen/profile/edit_profile_screen.dart';
 import 'package:movielog/screen/profile/favorites_screen.dart';
 import 'package:movielog/screen/profile/my_ratings_screen.dart';
@@ -96,6 +97,20 @@ class AppRouter {
                 child: const MovieScreen(),
               ),
               routes: [
+                GoRoute(
+                  path: 'search',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) => ChangeNotifierProvider(
+                    create: (_) => PagedMoviesViewModel(
+                      tmdbApi: context.read<TmdbMovieService>(),
+                    ),
+                    child: MovieSearchScreen(
+                      onOpenMovie: (movie) async {
+                        await context.push('/movies/${movie.id}', extra: movie);
+                      },
+                    ),
+                  ),
+                ),
                 GoRoute(
                   path: ':movieId',
                   parentNavigatorKey: rootNavigatorKey,

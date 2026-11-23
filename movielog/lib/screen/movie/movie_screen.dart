@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:movielog/view_models/load_phase.dart';
 import 'package:movielog/view_models/page_movies_view_model.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
@@ -22,9 +23,8 @@ class MovieScreen extends StatelessWidget {
         title: '영화',
         actions: [
           IconButton(
-            onPressed: () {
-              // todo: 나중에
-            },
+            onPressed: () => context.push('/movies/search'),
+            tooltip: '영화 검색',
             icon: SvgPicture.asset(
               'assets/icons/search.svg',
               width: 18,

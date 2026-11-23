@@ -208,13 +208,15 @@ class _HorizontalMovieCard extends StatelessWidget {
                         movie?.title ?? '영화 정보를 불러오지 못했어요.',
                         style: AppTextStyles.bodyLargeBold,
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        caption,
-                        style: AppTextStyles.labelLargeBold.copyWith(
-                          color: AppColors.primary500,
+                      if (caption.isNotEmpty) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          caption,
+                          style: AppTextStyles.labelLargeBold.copyWith(
+                            color: AppColors.primary500,
+                          ),
                         ),
-                      ),
+                      ],
                       if (movie == null)
                         TextButton(
                           onPressed: isRetrying ? null : onRetry,
