@@ -7,6 +7,7 @@ import 'package:movielog/screen/main_screen.dart';
 import 'package:movielog/screen/movie/movie_detail_loader.dart';
 import 'package:movielog/screen/movie/movie_screen.dart';
 import 'package:movielog/screen/profile/edit_profile_screen.dart';
+import 'package:movielog/screen/profile/favorites_screen.dart';
 import 'package:movielog/screen/profile/my_ratings_screen.dart';
 import 'package:movielog/screen/profile/profile_screen.dart';
 import 'package:movielog/screen/signup/signup_screen.dart';
@@ -19,6 +20,7 @@ import 'package:movielog/services/tmdb_movie_service.dart';
 import 'package:movielog/view_models/auth_view_model.dart';
 import 'package:movielog/view_models/edit_profile_view_model.dart';
 import 'package:movielog/view_models/favorite_detail_view_model.dart';
+import 'package:movielog/view_models/favorites_view_model.dart';
 import 'package:movielog/view_models/movie_home_view_model.dart';
 import 'package:movielog/view_models/movie_list_view_model.dart';
 import 'package:movielog/view_models/my_ratings_view_model.dart';
@@ -197,6 +199,47 @@ class AppRouter {
                   },
                 ),
 
+                GoRoute(
+                  path: 'favorites',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) {
+                    final auth = context.watch<AuthViewModel>();
+                    final email = auth.member?.email;
+                    final guard = context.read<SessionGuard>();
+                    if (auth.status != AuthStatus.signedIn ||
+                        email == null ||
+                        guard.accountId != email) {
+                      return Scaffold(
+                        appBar: AppBar(
+                          centerTitle: true,
+                          title: const Text('내 즐겨찾기'),
+                        ),
+                        body: Center(
+                          child: auth.memberStatus == MemberLoadStatus.error
+                              ? MovieLogButton(
+                                  label: '내 정보 다시 불러오기',
+                                  onPressed: () => auth.loadMember(force: true),
+                                )
+                              : const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    return ChangeNotifierProvider<FavoritesViewModel>(
+                      key: ValueKey((email, guard.generation)),
+                      create: (context) => FavoritesViewModel(
+                        favoriteApi: context.read<FavoriteApiService>(),
+                        tmdbApi: context.read<TmdbMovieService>(),
+                        sessionGuard: guard,
+                        accountId: email,
+                      ),
+                      child: FavoritesScreen(
+                        onOpenMovie: (movie) async {
+                          await context.push('/movies/${movie.id}', extra: movie);
+                        },
+                      ),
+                    );
+                  },
+                ),
                 GoRoute(
                   path: 'profile/edit',
                   parentNavigatorKey: rootNavigatorKey,

@@ -72,9 +72,19 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 ),
                 // 내가 등록한 평점
-                ProfileMenuTile(
-                  title: '내가 등록한 평점',
-                  onTap: () => context.push('/my/ratings'),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: 8,
+                  children: [
+                    ProfileMenuTile(
+                      title: '내가 등록한 평점',
+                      onTap: () => context.push('/my/ratings'),
+                    ),
+                    ProfileMenuTile(
+                      title: '내 즐겨찾기',
+                      onTap: () => context.push('/my/favorites'),
+                    ),
+                  ],
                 ),
                 // 선호 장르
                 FavoriteGenres(),
