@@ -3,6 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movielog/core/network/movie_log_client.dart';
 import 'package:movielog/core/network/tmdb_client.dart';
+import 'package:movielog/core/session/auth_session_bridge.dart';
+import 'package:movielog/core/session/session_guard.dart';
 import 'package:movielog/core/storage/member_id_storage.dart';
 import 'package:movielog/core/storage/token_storage.dart';
 import 'package:movielog/router/app_router.dart';
@@ -58,6 +60,22 @@ class MovieLogApp extends StatelessWidget {
             context.read<TokenStorage>(),
             context.read<MemberIdStorage>(),
           ),
+        ),
+        Provider<AuthSessionBridge>(
+          create: (context) {
+            final auth = context.read<AuthViewModel>();
+            return AuthSessionBridge(
+              authSignals: auth,
+              sessionVersion: () => auth.sessionVersion,
+              verifiedEmail: () => auth.status == AuthStatus.signedIn
+                  ? auth.member?.email
+                  : null,
+            );
+          },
+          dispose: (_, bridge) => bridge.dispose(),
+        ),
+        Provider<SessionGuard>(
+          create: (context) => context.read<AuthSessionBridge>().guard,
         ),
       ],
       child: const _MovieLogRouterApp(), // 뒤 절의 Stateful Router 호스트를 사용합니다.
