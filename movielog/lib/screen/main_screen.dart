@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movielog/theme/app_colors.dart';
+import 'package:movielog/view_models/auth_view_model.dart';
+import 'package:provider/provider.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({
     super.key,
     required this.child,
@@ -14,11 +16,27 @@ class MainScreen extends StatelessWidget {
   final int currentIndex;
 
   @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen>{
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 어느 탭으로 진입하든 내 정보를 한 번 불러와 AuthViewModel.member에 보관합니다.
+      if (!mounted) return;
+      context.read<AuthViewModel>().loadMember();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      body: widget.child,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
+        selectedIndex: widget.currentIndex,
         backgroundColor: AppColors.base,
         indicatorColor: AppColors.primary200,
         onDestinationSelected: (index) {

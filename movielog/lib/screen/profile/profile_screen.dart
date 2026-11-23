@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:movielog/view_models/auth_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:movielog/screen/profile/widgets/profile_menu_tile.dart';
 import 'package:movielog/widgets/common_app_bar.dart';
@@ -11,8 +13,18 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthViewModel>();
+    final member = auth.member;
     return Scaffold(
-      appBar: const CommonAppBar(title: '내 프로필'),
+      appBar: CommonAppBar(
+        title: '내 프로필',
+        actions: [
+          TextButton(
+            onPressed: auth.storageCleanupInProgress ? null : auth.logout,
+            child: const Text('로그아웃'),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -22,7 +34,24 @@ class ProfileScreen extends StatelessWidget {
               spacing: 32,
               children: [
                 // 프로필 헤더 - 이미지, 닉네임
-                ProfileHeader(),
+                if (member != null)
+                  ProfileHeader(
+                    nickname: member.nickname,
+                    email: member.email,
+                    onEdit: () => context.push('/my/profile/edit'),
+                  )
+                else if (auth.memberStatus == MemberLoadStatus.error)
+                  Column(
+                    children: [
+                      Text(auth.message ?? '내 정보를 불러오지 못했어요.'),
+                      TextButton(
+                        onPressed: () => auth.loadMember(force: true),
+                        child: const Text('다시 시도'),
+                      ),
+                    ],
+                  )
+                else
+                  const Center(child: CircularProgressIndicator()),
                 // 통계 카드
                 Row(
                   spacing: 8,
